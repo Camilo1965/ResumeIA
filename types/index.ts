@@ -111,32 +111,21 @@ export interface SkillCategory {
   skillsList: string[];
 }
 
-// ATS Analysis Types
-export interface ATSAnalysisResult {
-  overallScore: number;
-  breakdown: {
-    keywordMatch: ATSScoreDetail;
-    formatScore: ATSScoreDetail;
-    experienceRelevance: ATSScoreDetail;
-    skillsMatch: ATSScoreDetail;
-    education: ATSScoreDetail;
+export interface LinkedInImportRequest {
+  linkedinUrl?: string;
+  manualData?: string;
+}
+
+export interface LinkedInImportResponse {
+  success: boolean;
+  data?: {
+    fullName?: string;
+    professionalTitle?: string;
+    location?: string;
+    linkedinUrl?: string;
+    workExperience?: string;
+    education?: string;
+    skills?: string[];
   };
-  keywords: {
-    found: string[];
-    missing: string[];
-    optional: string[];
-  };
-  recommendations: string[];
+  error?: string;
 }
-
-export interface ATSScoreDetail {
-  score: number;
-  max: number;
-  details: string[];
-}
-
-export interface ATSAnalysisRequest {
-  cvContent: CVContent;
-  jobRequirements?: string;
-}
-
