@@ -31,8 +31,9 @@ export function HistoryDataTable() {
     total: 0,
     totalPages: 1,
   });
-  const [showToast, setShowToast] = useState(false);
+  const [isToastVisible, setIsToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
   const [previewCVId, setPreviewCVId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -125,10 +126,10 @@ export function HistoryDataTable() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      showSuccessToast('PDF downloaded successfully!');
+      showToast('PDF downloaded successfully!', 'success');
     } catch (error) {
       console.error('Failed to download CV:', error);
-      showSuccessToast('Failed to download PDF');
+      showToast('Failed to download PDF', 'error');
     }
   };
 
@@ -139,17 +140,18 @@ export function HistoryDataTable() {
       
       // Copy to clipboard
       await navigator.clipboard.writeText(data.shareUrl);
-      showSuccessToast('Link copied to clipboard!');
+      showToast('Link copied to clipboard!', 'success');
     } catch (error) {
       console.error('Failed to share CV:', error);
-      showSuccessToast('Failed to copy link');
+      showToast('Failed to copy link', 'error');
     }
   };
 
-  const showSuccessToast = (message: string) => {
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToastMessage(message);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    setToastType(type);
+    setIsToastVisible(true);
+    setTimeout(() => setIsToastVisible(false), 3000);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -175,8 +177,10 @@ export function HistoryDataTable() {
   return (
     <div className="space-y-6">
       {/* Toast Notification */}
-      {showToast && (
-        <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in">
+      {isToastVisible && (
+        <div className={`fixed top-4 right-4 z-50 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in ${
+          toastType === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`}>
           {toastMessage}
         </div>
       )}
