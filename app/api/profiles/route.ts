@@ -20,11 +20,32 @@ export async function GET() {
       });
     }
 
-    const allProfiles = await databaseClient.userProfile.findMany({
+    const sessionData = await getServerSession(resumeAIAuthConfiguration);
+    
+    if (!sessionData?.user?.email) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const currentUser = await databaseClient.authenticatedUser.findUnique({
+      where: { emailAddress: sessionData.user.email },
+    });
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    const userProfiles = await databaseClient.userProfile.findMany({
+      where: { ownedByUserId: currentUser.userId },
       orderBy: { profileCreatedAt: 'desc' },
     });
 
-    const formattedProfiles = allProfiles.map((p: any) => ({
+    const formattedProfiles = userProfiles.map((p: any) => ({
       profileId: p.profileId,
       completeName: p.completeName,
       technicalSkills: p.technicalSkills || 'Not specified',
