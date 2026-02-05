@@ -53,7 +53,7 @@ export const resumeAIAuthConfiguration: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 2592000,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
     signIn: '/login',

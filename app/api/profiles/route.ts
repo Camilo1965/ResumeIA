@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { databaseClient } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { resumeAIAuthConfiguration } from '@/lib/auth-setup';
 
 export async function GET() {
   try {
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const sessionData = await getServerSession();
+    const sessionData = await getServerSession(resumeAIAuthConfiguration);
     
     if (!sessionData?.user?.email) {
       return NextResponse.json(

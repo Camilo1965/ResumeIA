@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, User, Mail, FileText, Clock, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function AuthenticatedUserMenu() {
   const { data: sessionData, status: sessionStatus } = useSession();
@@ -52,10 +53,12 @@ export function AuthenticatedUserMenu() {
         aria-label="User menu"
       >
         {sessionData.user.image ? (
-          <img 
+          <Image 
             src={sessionData.user.image} 
             alt="Avatar" 
-            className="w-10 h-10 rounded-full border-2 border-accent-gold"
+            width={40}
+            height={40}
+            className="rounded-full border-2 border-accent-gold"
           />
         ) : (
           <div className="w-10 h-10 bg-accent-gold rounded-full flex items-center justify-center font-semibold text-white">
