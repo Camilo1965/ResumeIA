@@ -176,28 +176,34 @@ export function ProfileEditorForm({ existingProfileData, onSaveProfile }: Profil
       <div>
         <label className="label-text flex items-center space-x-2">
           <Briefcase size={16} />
-          <span>Work Experience</span>
+          <span>Work Experience *</span>
         </label>
         <textarea
-          {...register('jobHistory')}
+          {...register('jobHistory', { required: 'Work Experience is required' })}
           className="input-field"
           rows={5}
           placeholder="Describe your work history, one job per line or paragraph..."
         />
+        {errors.jobHistory && (
+          <p className="text-red-500 text-sm mt-1">{errors.jobHistory.message}</p>
+        )}
       </div>
 
       {/* Education */}
       <div>
         <label className="label-text flex items-center space-x-2">
           <GraduationCap size={16} />
-          <span>Education</span>
+          <span>Education *</span>
         </label>
         <textarea
-          {...register('academicHistory')}
+          {...register('academicHistory', { required: 'Education is required' })}
           className="input-field"
           rows={3}
           placeholder="Your educational background..."
         />
+        {errors.academicHistory && (
+          <p className="text-red-500 text-sm mt-1">{errors.academicHistory.message}</p>
+        )}
       </div>
 
       {/* Technical Skills */}

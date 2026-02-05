@@ -13,7 +13,7 @@ export function AppHeader() {
 
           <nav className="flex items-center space-x-6">
             <Link 
-              href="/user-profiles" 
+              href="/profiles" 
               className="flex items-center space-x-2 hover:text-accent-gold transition-colors"
             >
               <Users size={20} />
