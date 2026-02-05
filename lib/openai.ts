@@ -9,11 +9,12 @@ export async function generateCVContentWithAI(
   profileInfo: ProfileData,
   positionTitle: string,
   organizationName: string,
-  positionDetails?: string
+  positionDetails?: string,
+  cvLanguage: 'en' | 'es' = 'en'
 ): Promise<CVContent> {
   // Fallback mock data when API key is not configured
   if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'demo-key') {
-    return createMockCVContent(profileInfo, positionTitle, organizationName);
+    return createMockCVContent(profileInfo, positionTitle, organizationName, cvLanguage);
   }
 
   try {
@@ -21,20 +22,30 @@ export async function generateCVContentWithAI(
       profileInfo,
       positionTitle,
       organizationName,
-      positionDetails
+      positionDetails,
+      cvLanguage
     );
+
+    const systemPrompt = cvLanguage === 'es'
+      ? `Eres un experto redactor de CVs profesionales especializado en crear CVs optimizados para ATS. Tú:
+- Destacas la experiencia relevante para puestos objetivo
+- Usas verbos de acción fuertes y logros cuantificables
+- Incorporas palabras clave de los requisitos del trabajo de forma natural
+- Creas contenido convincente impulsado por métricas
+- Formateas las respuestas como JSON válido únicamente, sin markdown ni bloques de código`
+      : `You are an expert resume writer specializing in creating ATS-friendly resumes. You:
+- Highlight relevant experience for target positions
+- Use strong action verbs and quantifiable achievements
+- Incorporate keywords from job requirements naturally
+- Create compelling, metric-driven content
+- Format responses as valid JSON only, no markdown or code blocks`;
 
     const completion = await aiClient.chat.completions.create({
       model: 'gpt-4',
       messages: [
         {
           role: 'system',
-          content: `You are an expert resume writer specializing in creating ATS-friendly resumes. You:
-- Highlight relevant experience for target positions
-- Use strong action verbs and quantifiable achievements
-- Incorporate keywords from job requirements naturally
-- Create compelling, metric-driven content
-- Format responses as valid JSON only, no markdown or code blocks`,
+          content: systemPrompt,
         },
         {
           role: 'user',
@@ -52,7 +63,7 @@ export async function generateCVContentWithAI(
     return parseCVContentFromAI(responseText, profileInfo);
   } catch (error) {
     console.error('AI generation error:', error);
-    return createMockCVContent(profileInfo, positionTitle, organizationName);
+    return createMockCVContent(profileInfo, positionTitle, organizationName, cvLanguage);
   }
 }
 
@@ -60,8 +71,102 @@ function buildPromptForCVGeneration(
   profileInfo: ProfileData,
   positionTitle: string,
   organizationName: string,
-  positionDetails?: string
+  positionDetails?: string,
+  cvLanguage: 'en' | 'es' = 'en'
 ): string {
+  if (cvLanguage === 'es') {
+    return `Eres un redactor experto de CVs. Crea un CV profesional optimizado para ATS adaptado al puesto objetivo.
+
+PUESTO OBJETIVO: ${positionTitle} en ${organizationName}
+${positionDetails ? `\nREQUISITOS DEL TRABAJO:\n${positionDetails}\n` : ''}
+
+INFORMACIÓN DEL CANDIDATO:
+- Nombre: ${profileInfo.completeName}
+- Título Actual: ${profileInfo.jobTitle || 'Ingeniero de Software'}
+- Ubicación: ${profileInfo.cityLocation}
+- Teléfono: ${profileInfo.contactPhone}
+- Email: ${profileInfo.contactEmail}
+${profileInfo.linkedinProfile ? `- LinkedIn: ${profileInfo.linkedinProfile}` : ''}
+
+HISTORIAL LABORAL:
+${profileInfo.jobHistory || 'No se proporcionó historial laboral'}
+
+EDUCACIÓN:
+${profileInfo.academicHistory || 'No se proporcionó historial educativo'}
+
+HABILIDADES TÉCNICAS:
+${profileInfo.technicalSkills || 'No se proporcionaron habilidades técnicas'}
+
+INSTRUCCIONES:
+1. Crea un RESUMEN PROFESIONAL convincente (3-4 oraciones) que:
+   - Destaque años de experiencia y experiencia clave
+   - Use palabras clave de los requisitos del trabajo
+   - Enfatice logros cuantificables
+   - Se alinee con el puesto objetivo
+   - Use **negrita** para tecnologías y métricas importantes
+
+2. Para EXPERIENCIA PROFESIONAL, proporciona 5-8 puntos por rol que:
+   - Comiencen con verbos de acción fuertes (Lideré, Arquitecté, Implementé, Impulsé, etc.)
+   - Incluyan métricas cuantificables (porcentajes, números, escala)
+   - Destaquen tecnologías relevantes en **negrita**
+   - Se enfoquen en el impacto y los resultados
+   - Adapten los logros para coincidir con los requisitos del trabajo
+
+3. Para HABILIDADES, organiza en estas categorías:
+   - Programación y Desarrollo
+   - IA e Inteligencia Artificial (si aplica)
+   - Documentación y Aseguramiento de Calidad
+   - Colaboración en Equipo y Compromiso con las Partes Interesadas
+
+4. Incluye una breve descripción del rol (1-2 líneas) para cada experiencia laboral antes de los puntos
+
+RESPONDE SOLO CON JSON VÁLIDO en esta estructura exacta:
+{
+  "professionalOverview": "Resumen de 3-4 oraciones con **palabras clave en negrita**",
+  "workExperienceList": [
+    {
+      "companyName": "Nombre de la Empresa",
+      "dateRange": "Mes Año - Mes Año (o Presente)",
+      "roleTitle": "Título del Trabajo",
+      "roleDescription": "Breve descripción de 1-2 líneas del rol con **tecnologías clave**",
+      "achievements": [
+        "Verbo de acción + logro con **25%** métrica y **tecnología**",
+        "Otro logro con impacto cuantificable",
+        "Logro que muestra colaboración o liderazgo",
+        "Logro que demuestra experiencia técnica",
+        "Logro alineado con los requisitos del trabajo"
+      ],
+      "relevantTechnologies": ["Tech1", "Tech2", "Tech3", "Tech4"]
+    }
+  ],
+  "educationList": [
+    {
+      "institutionName": "Nombre de la Universidad",
+      "dateRange": "Año - Año",
+      "degreeObtained": "Título del Grado (ej., Licenciatura en Ciencias de la Computación)"
+    }
+  ],
+  "skillCategories": [
+    {
+      "categoryName": "Programación y Desarrollo",
+      "skillsList": ["JavaScript", "TypeScript", "Python", "React", "Node.js"]
+    },
+    {
+      "categoryName": "IA e Inteligencia Artificial",
+      "skillsList": ["TensorFlow", "PyTorch", "OpenAI API", "LangChain"]
+    },
+    {
+      "categoryName": "Documentación y Aseguramiento de Calidad",
+      "skillsList": ["Jest", "Pytest", "Git", "CI/CD", "Agile"]
+    },
+    {
+      "categoryName": "Colaboración en Equipo y Compromiso con las Partes Interesadas",
+      "skillsList": ["Liderazgo Técnico", "Revisión de Código", "Mentoría", "Colaboración Interfuncional"]
+    }
+  ]
+}`;
+  }
+  
   return `You are an expert resume writer. Create a professional, ATS-friendly resume tailored to the target position.
 
 TARGET POSITION: ${positionTitle} at ${organizationName}
@@ -182,8 +287,79 @@ function parseCVContentFromAI(aiResponse: string, profileInfo: ProfileData): CVC
 function createMockCVContent(
   profileInfo: ProfileData,
   positionTitle: string,
-  organizationName: string
+  organizationName: string,
+  cvLanguage: 'en' | 'es' = 'en'
 ): CVContent {
+  if (cvLanguage === 'es') {
+    return {
+      headerInfo: {
+        fullName: profileInfo.completeName,
+        professionalRole: positionTitle || profileInfo.jobTitle || 'Ingeniero de Software Senior',
+        locationText: profileInfo.cityLocation,
+        phoneNumber: profileInfo.contactPhone,
+        emailAddress: profileInfo.contactEmail,
+        linkedinUrl: profileInfo.linkedinProfile,
+      },
+      professionalOverview: `Ingeniero de software orientado a resultados con **más de 8 años** de experiencia especializado en **desarrollo full-stack** y **soluciones de IA/ML**. Historial comprobado de arquitectura de **microservicios escalables** que sirven a **millones de usuarios** e implementación de **modelos de aprendizaje automático** que aumentaron la eficiencia en un **30%**. Experto en **React**, **Node.js**, **Python** y **tecnologías en la nube**. Apasionado por entregar soluciones de alto impacto y mentoría de equipos de ingeniería.`,
+      workExperienceList: [
+        {
+          companyName: 'Tech Innovations Corp',
+          dateRange: 'Enero 2020 - Presente',
+          roleTitle: 'Ingeniero de Software Senior',
+          roleDescription: 'Liderando el desarrollo de aplicaciones empresariales impulsadas por IA utilizando **React**, **Node.js** y **Python**, mientras mentorea un equipo de 6 ingenieros e impulsa decisiones arquitectónicas.',
+          achievements: [
+            'Arquitecté e implementé **infraestructura de microservicios** en **AWS**, reduciendo el tiempo de despliegue en un **40%** y mejorando la confiabilidad del sistema a un **99.9% de tiempo de actividad**',
+            'Implementé **sistema de recomendaciones de aprendizaje automático** usando **TensorFlow** que mejoró el engagement de usuarios en un **25%** e impulsó **$2M en ingresos adicionales**',
+            'Lideré equipo de **6 desarrolladores** en la migración de monolito heredado a arquitectura moderna, entregando **15% antes del cronograma** sin incidentes de producción',
+            'Establecí **pipelines de CI/CD** y **frameworks de pruebas automatizadas**, disminuyendo errores en producción en un **35%** y acelerando ciclos de lanzamiento',
+            'Promoviendo iniciativas de calidad de código incluyendo revisiones exhaustivas de código y documentación de mejores prácticas, mejorando la velocidad del equipo en un **20%**',
+            'Colaboré con equipos de producto y diseño para entregar **5 funcionalidades importantes** que aumentaron las puntuaciones de satisfacción del cliente en un **18%**',
+          ],
+          relevantTechnologies: ['React', 'TypeScript', 'Node.js', 'Python', 'AWS', 'TensorFlow', 'Docker', 'Kubernetes'],
+        },
+        {
+          companyName: 'Digital Solutions Ltd',
+          dateRange: 'Marzo 2018 - Diciembre 2019',
+          roleTitle: 'Desarrollador Full Stack',
+          roleDescription: 'Desarrollé y mantuve aplicaciones web empresariales y **APIs RESTful** que sirven a **más de 50,000 usuarios activos**, utilizando **React**, **Node.js** y **PostgreSQL**.',
+          achievements: [
+            'Construí portal de clientes desde cero usando **React** y **Node.js**, sirviendo a **más de 50,000 usuarios** con **99.9% de tiempo de actividad** y **tiempos de respuesta por debajo de 200ms**',
+            'Optimicé consultas de base de datos e implementé estrategias de caché, reduciendo el tiempo de respuesta de la API en un **30%** y la carga de la base de datos en un **40%**',
+            'Implementé **pipeline de CI/CD integral** usando **Jenkins** y **Docker**, disminuyendo el tiempo de despliegue de horas a **15 minutos**',
+            'Desarrollé **suite de pruebas automatizadas** con **90% de cobertura de código**, reduciendo errores de producción en un **20%** y mejorando la mantenibilidad del código',
+            'Colaboré con **equipos interfuncionales** para recopilar requisitos y entregar soluciones que cumplieron con el **100% de los criterios de aceptación**',
+          ],
+          relevantTechnologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'Docker', 'Jenkins', 'Git'],
+        },
+      ],
+      educationList: [
+        {
+          institutionName: 'Universidad Técnica',
+          dateRange: '2014 - 2018',
+          degreeObtained: 'Licenciatura en Ciencias de la Computación',
+        },
+      ],
+      skillCategories: [
+        {
+          categoryName: 'Programación y Desarrollo',
+          skillsList: ['JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'React', 'Next.js', 'Node.js', 'Express', 'Django'],
+        },
+        {
+          categoryName: 'IA e Inteligencia Artificial',
+          skillsList: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'OpenAI API', 'LangChain', 'Redes Neuronales', 'PLN'],
+        },
+        {
+          categoryName: 'Documentación y Aseguramiento de Calidad',
+          skillsList: ['Jest', 'Pytest', 'Selenium', 'Git', 'CI/CD', 'Jenkins', 'GitHub Actions', 'Agile/Scrum'],
+        },
+        {
+          categoryName: 'Colaboración en Equipo y Compromiso con las Partes Interesadas',
+          skillsList: ['Liderazgo Técnico', 'Revisión de Código', 'Mentoría', 'Gestión de Proyectos', 'Colaboración Interfuncional'],
+        },
+      ],
+    };
+  }
+  
   return {
     headerInfo: {
       fullName: profileInfo.completeName,

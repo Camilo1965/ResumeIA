@@ -1,0 +1,43 @@
+{
+  "title": "Resume Generator",
+  "form": {
+    "profileLabel": "Profile",
+    "jobInfoTitle": "Job Information",
+    "jobTitle": "Job Title",
+    "jobTitlePlaceholder": "e.g., Senior Software Engineer",
+    "jobTitleRequired": "Job title is required",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "e.g., Tech Innovations Corp",
+    "companyNameRequired": "Company name is required",
+    "jobLink": "Job Link (optional)",
+    "jobLinkPlaceholder": "https://example.com/job-posting",
+    "showLinkedin": "Show LinkedIn on resume",
+    "jobRequirements": "Job Requirements (optional)",
+    "jobRequirementsHelp": "Share job requirements for AI to tailor your resume",
+    "jobRequirementsPlaceholder": "Paste the job description here to tailor your resume...",
+    "resumeLanguage": "Resume Language",
+    "resumeLanguageHelp": "Language for the generated resume (independent of UI language)",
+    "templateTitle": "Resume Template",
+    "backgroundTitle": "Background Style",
+    "noBackground": "No Background",
+    "particleDots": "Particle Dots",
+    "dotFlow": "Dot Flow",
+    "hexagon": "Hexagon",
+    "gradientFlow": "Gradient Flow",
+    "circuitPattern": "Circuit Pattern",
+    "waves": "Waves"
+  },
+  "sections": {
+    "summary": "PROFESSIONAL SUMMARY",
+    "experience": "PROFESSIONAL EXPERIENCE",
+    "education": "EDUCATION",
+    "skills": "PROFESSIONAL SKILLS"
+  },
+  "templates": {
+    "modern": "Modern",
+    "classic": "Classic",
+    "minimalist": "Minimalist",
+    "executive": "Executive",
+    "creative": "Creative"
+  }
+}

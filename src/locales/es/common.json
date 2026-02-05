@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "profiles": "Perfiles",
+    "history": "Historial"
+  },
+  "buttons": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "generate": "Generar CV",
+    "download": "Guardar y Descargar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "create": "Crear",
+    "back": "Volver",
+    "next": "Siguiente"
+  },
+  "messages": {
+    "success": "¡Éxito!",
+    "error": "Ocurrió un error",
+    "loading": "Cargando...",
+    "generating": "Generando...",
+    "saved": "Guardado exitosamente",
+    "deleted": "Eliminado exitosamente"
+  },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "portuguese": "Português",
+    "french": "Français"
+  }
+}

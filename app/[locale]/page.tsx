@@ -1,18 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { CVBuilderForm } from '@/components/cv-builder/CVBuilderForm';
 import { CVPreviewPanel } from '@/components/cv-builder/CVPreviewPanel';
 import { CVContent } from '@/types';
 
 export default function ResumeGeneratorPage() {
+  const t = useTranslations('resume');
   const [cvContent, setCVContent] = useState<CVContent | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('modern');
+  const [cvLanguage, setCvLanguage] = useState<'en' | 'es'>('en');
 
   const handleGenerateCV = async (formData: any) => {
     setIsGenerating(true);
     setSelectedTemplate(formData.selectedTemplate || 'modern');
+    setCvLanguage(formData.cvLanguage || 'en');
     try {
       const response = await fetch('/api/generate-cv', {
         method: 'POST',
@@ -50,7 +54,8 @@ export default function ResumeGeneratorPage() {
         },
         body: JSON.stringify({ 
           cvContent,
-          template: selectedTemplate 
+          template: selectedTemplate,
+          cvLanguage 
         }),
       });
 
@@ -76,7 +81,7 @@ export default function ResumeGeneratorPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Resume Generator</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('title')}</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Form Section */}

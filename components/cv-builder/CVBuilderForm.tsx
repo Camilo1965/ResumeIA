@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Briefcase, Building2, Link2, FileText, Download, FileCheck } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Briefcase, Building2, Link2, FileText, Download, FileCheck, Globe } from 'lucide-react';
 import { TemplateVariant, BackgroundPattern } from '@/types';
 
 // Mock profile name - replace with actual profile fetch when authentication is implemented
@@ -16,6 +17,7 @@ interface CVFormData {
   positionDetails?: string;
   selectedTemplate: TemplateVariant;
   bgPattern: BackgroundPattern;
+  cvLanguage: 'en' | 'es';
 }
 
 interface CVBuilderFormProps {
@@ -26,16 +28,20 @@ interface CVBuilderFormProps {
 }
 
 export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasGeneratedCV }: CVBuilderFormProps) {
+  const t = useTranslations('resume');
+  const tButtons = useTranslations('buttons');
   const { register, handleSubmit, formState: { errors } } = useForm<CVFormData>({
     defaultValues: {
       displayLinkedin: true,
       selectedTemplate: 'modern',
       bgPattern: 'none',
+      cvLanguage: 'en',
     },
   });
 
   const [activeTemplate, setActiveTemplate] = useState<TemplateVariant>('modern');
   const [activeBackground, setActiveBackground] = useState<BackgroundPattern>('none');
+  const [cvLanguage, setCvLanguage] = useState<'en' | 'es'>('en');
   const [profileName, setProfileName] = useState<string>('');
 
   useEffect(() => {
@@ -47,6 +53,7 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
   const onSubmitForm = async (formData: CVFormData) => {
     formData.selectedTemplate = activeTemplate;
     formData.bgPattern = activeBackground;
+    formData.cvLanguage = cvLanguage;
     await onGenerateCV(formData);
   };
 
@@ -56,25 +63,25 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
       {profileName && (
         <div className="mb-6 pb-4 border-b-2 border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800">
-            Profile: {profileName}
+            {t('form.profileLabel')}: {profileName}
           </h2>
         </div>
       )}
 
       {/* Job Information Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-700 mb-3">Job Information</h3>
+        <h3 className="text-lg font-semibold text-gray-700 mb-3">{t('form.jobInfoTitle')}</h3>
         
         {/* Job Title */}
       <div>
         <label className="label-text flex items-center space-x-2">
           <Briefcase size={16} />
-          <span>Job Title *</span>
+          <span>{t('form.jobTitle')} *</span>
         </label>
         <input
-          {...register('positionTitle', { required: 'Job title is required' })}
+          {...register('positionTitle', { required: t('form.jobTitleRequired') })}
           className="input-field"
-          placeholder="e.g., Senior Software Engineer"
+          placeholder={t('form.jobTitlePlaceholder')}
         />
         {errors.positionTitle && (
           <p className="text-red-500 text-sm mt-1">{errors.positionTitle.message}</p>
@@ -85,12 +92,12 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
       <div>
         <label className="label-text flex items-center space-x-2">
           <Building2 size={16} />
-          <span>Company Name *</span>
+          <span>{t('form.companyName')} *</span>
         </label>
         <input
-          {...register('organizationName', { required: 'Company name is required' })}
+          {...register('organizationName', { required: t('form.companyNameRequired') })}
           className="input-field"
-          placeholder="e.g., Tech Innovations Corp"
+          placeholder={t('form.companyNamePlaceholder')}
         />
         {errors.organizationName && (
           <p className="text-red-500 text-sm mt-1">{errors.organizationName.message}</p>
@@ -101,12 +108,12 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
       <div>
         <label className="label-text flex items-center space-x-2">
           <Link2 size={16} />
-          <span>Job Link (optional)</span>
+          <span>{t('form.jobLink')}</span>
         </label>
         <input
           {...register('jobPostingUrl')}
           className="input-field"
-          placeholder="https://example.com/job-posting"
+          placeholder={t('form.jobLinkPlaceholder')}
           type="url"
         />
       </div>
@@ -120,7 +127,7 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
           className="w-4 h-4 text-primary-dark focus:ring-primary"
         />
         <label htmlFor="showLinkedin" className="text-sm font-medium text-gray-700">
-          Show LinkedIn on resume
+          {t('form.showLinkedin')}
         </label>
       </div>
 
@@ -128,21 +135,54 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
       <div>
         <label className="label-text flex items-center space-x-2">
           <FileText size={16} />
-          <span>Job Requirements (optional)</span>
+          <span>{t('form.jobRequirements')}</span>
         </label>
-        <p className="text-xs text-gray-500 mb-2">Share job requirements for AI to tailor your resume</p>
+        <p className="text-xs text-gray-500 mb-2">{t('form.jobRequirementsHelp')}</p>
         <textarea
           {...register('positionDetails')}
           className="input-field"
           rows={6}
-          placeholder="Paste the job description here to tailor your resume..."
+          placeholder={t('form.jobRequirementsPlaceholder')}
         />
       </div>
       </div>
 
+      {/* Resume Language Selector */}
+      <div>
+        <label className="label-text flex items-center space-x-2">
+          <Globe size={16} />
+          <span>{t('form.resumeLanguage')}</span>
+        </label>
+        <p className="text-xs text-gray-500 mb-2">{t('form.resumeLanguageHelp')}</p>
+        <div className="flex space-x-4">
+          <button
+            type="button"
+            onClick={() => setCvLanguage('en')}
+            className={`flex-1 p-3 border-2 rounded-lg text-center transition-all ${
+              cvLanguage === 'en'
+                ? 'border-accent-teal bg-teal-50 font-semibold'
+                : 'border-gray-300 hover:border-gray-400'
+            }`}
+          >
+            🇺🇸 English
+          </button>
+          <button
+            type="button"
+            onClick={() => setCvLanguage('es')}
+            className={`flex-1 p-3 border-2 rounded-lg text-center transition-all ${
+              cvLanguage === 'es'
+                ? 'border-accent-teal bg-teal-50 font-semibold'
+                : 'border-gray-300 hover:border-gray-400'
+            }`}
+          >
+            🇪🇸 Español
+          </button>
+        </div>
+      </div>
+
       {/* Resume Template Selector */}
       <div>
-        <label className="label-text">Resume Template</label>
+        <label className="label-text">{t('form.templateTitle')}</label>
         <div className="grid grid-cols-3 gap-3 mt-2">
           {(['modern', 'classic', 'minimalist', 'executive', 'creative'] as TemplateVariant[]).map((template) => (
             <button
@@ -155,7 +195,7 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
                   : 'border-gray-300 hover:border-gray-400'
               }`}
             >
-              {template}
+              {t(`templates.${template}` as any)}
               {(template === 'executive' || template === 'creative') && (
                 <span className="ml-1 text-xs">⭐</span>
               )}
@@ -166,16 +206,16 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
 
       {/* Background Style Selector */}
       <div>
-        <label className="label-text">Background Style</label>
+        <label className="label-text">{t('form.backgroundTitle')}</label>
         <div className="grid grid-cols-2 gap-3 mt-2">
           {([
-            { value: 'none', label: 'No Background' },
-            { value: 'particle_dots', label: 'Particle Dots' },
-            { value: 'dot_flow', label: 'Dot Flow' },
-            { value: 'hexagon', label: 'Hexagon' },
-            { value: 'gradient_flow', label: 'Gradient Flow', new: true },
-            { value: 'circuit_pattern', label: 'Circuit Pattern', new: true },
-            { value: 'waves', label: 'Waves', new: true },
+            { value: 'none', label: t('form.noBackground') },
+            { value: 'particle_dots', label: t('form.particleDots') },
+            { value: 'dot_flow', label: t('form.dotFlow') },
+            { value: 'hexagon', label: t('form.hexagon') },
+            { value: 'gradient_flow', label: t('form.gradientFlow'), new: true },
+            { value: 'circuit_pattern', label: t('form.circuitPattern'), new: true },
+            { value: 'waves', label: t('form.waves'), new: true },
           ] as { value: BackgroundPattern; label: string; new?: boolean }[]).map((bg) => (
             <button
               key={bg.value}
@@ -202,7 +242,7 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
           className="flex-1 flex items-center justify-center space-x-2 px-6 py-3 border-2 border-gray-400 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           <FileCheck size={20} />
-          <span>{isGenerating ? 'Generating...' : 'Generate Resume'}</span>
+          <span>{isGenerating ? tButtons('generating') : tButtons('generate')}</span>
         </button>
         <button
           type="button"
@@ -211,7 +251,7 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
           className="flex items-center justify-center space-x-2 px-6 py-3 bg-accent-gold text-white font-semibold rounded-lg hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           <Download size={20} />
-          <span>Save & Download</span>
+          <span>{tButtons('download')}</span>
         </button>
       </div>
     </form>
