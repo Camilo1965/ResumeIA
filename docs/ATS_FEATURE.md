@@ -15,13 +15,13 @@ The ATS feature analyzes resume compatibility with Applicant Tracking Systems an
 
 The ATS score is calculated based on five key categories:
 
-| Category | Weight | Description |
-|----------|--------|-------------|
-| Keyword Match | 30% | Matches keywords from job description with CV content |
-| Format Score | 20% | Evaluates ATS-friendly formatting (sections, headers, structure) |
-| Experience Relevance | 25% | Analyzes quality of work experience (metrics, action verbs, detail) |
-| Skills Match | 15% | Compares required skills with listed skills |
-| Education | 10% | Validates education section completeness |
+| Category              | Weight | Description                                                        |
+|-----------------------|--------|--------------------------------------------------------------------|
+| Keyword Match         | 30%    | Matches keywords from job description with CV content              |
+| Format Score          | 20%    | Evaluates ATS-friendly formatting (sections, headers, structure)   |
+| Experience Relevance  | 25%    | Analyzes quality of work experience (metrics, action verbs, detail)|
+| Skills Match          | 15%    | Compares required skills with listed skills                        |
+| Education             | 10%    | Validates education section completeness                           |
 
 ### 3. Score Interpretation
 
