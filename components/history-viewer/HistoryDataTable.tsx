@@ -11,6 +11,7 @@ interface CVHistoryRecord {
   lastModifiedDate: string;
   pdfUrl: string;
   shareUrl: string;
+  atsScore?: number;
 }
 
 interface PaginationInfo {
@@ -72,6 +73,7 @@ export function HistoryDataTable() {
           lastModifiedDate: '2026-02-05 01:15',
           pdfUrl: '/api/resume/1/pdf',
           shareUrl: '/share/abc123',
+          atsScore: 87,
         },
         {
           cvId: 2,
@@ -81,6 +83,7 @@ export function HistoryDataTable() {
           lastModifiedDate: '2026-02-05 01:00',
           pdfUrl: '/api/resume/2/pdf',
           shareUrl: '/share/def456',
+          atsScore: 75,
         },
         {
           cvId: 3,
@@ -90,6 +93,7 @@ export function HistoryDataTable() {
           lastModifiedDate: '2026-02-05 00:55',
           pdfUrl: '/api/resume/3/pdf',
           shareUrl: '/share/ghi789',
+          atsScore: 92,
         },
       ]);
       setPagination({ page: 1, limit: 15, total: 3, totalPages: 1 });
@@ -162,6 +166,35 @@ export function HistoryDataTable() {
 
   const handleLimitChange = (newLimit: number) => {
     setPagination({ ...pagination, limit: newLimit, page: 1 });
+  };
+
+  const getATSScoreBadge = (score?: number) => {
+    if (!score) {
+      return <span className="text-gray-400 text-sm">N/A</span>;
+    }
+
+    let colorClass = '';
+    let textClass = '';
+    
+    if (score >= 90) {
+      colorClass = 'bg-green-100 text-green-800 border-green-200';
+      textClass = 'text-green-700';
+    } else if (score >= 70) {
+      colorClass = 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      textClass = 'text-yellow-700';
+    } else if (score >= 50) {
+      colorClass = 'bg-orange-100 text-orange-800 border-orange-200';
+      textClass = 'text-orange-700';
+    } else {
+      colorClass = 'bg-red-100 text-red-800 border-red-200';
+      textClass = 'text-red-700';
+    }
+
+    return (
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border ${colorClass}`}>
+        {score}/100
+      </span>
+    );
   };
 
   if (isLoadingRecords) {
@@ -243,6 +276,7 @@ export function HistoryDataTable() {
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Profile Name</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Company Name</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Position</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">ATS Score</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Date Edited</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Actions</th>
               </tr>
@@ -256,6 +290,7 @@ export function HistoryDataTable() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{record.organizationName}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{record.positionTitle}</td>
+                  <td className="px-6 py-4 text-sm">{getATSScoreBadge(record.atsScore)}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{record.lastModifiedDate}</td>
                   <td className="px-6 py-4 text-sm">
                     <div className="flex space-x-2">
