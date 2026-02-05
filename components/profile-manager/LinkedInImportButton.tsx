@@ -24,6 +24,8 @@ export function LinkedInImportButton({ onImport }: LinkedInImportButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [importMethod, setImportMethod] = useState<'url' | 'manual'>('manual');
+  const [previewData, setPreviewData] = useState<LinkedInImportedData | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleImport = async () => {
     setError('');
@@ -49,9 +51,8 @@ export function LinkedInImportButton({ onImport }: LinkedInImportButtonProps) {
       }
 
       if (result.data) {
-        onImport(result.data);
-        setShowModal(false);
-        resetForm();
+        setPreviewData(result.data);
+        setShowPreview(true);
       } else {
         throw new Error('No data received from import');
       }
@@ -62,11 +63,21 @@ export function LinkedInImportButton({ onImport }: LinkedInImportButtonProps) {
     }
   };
 
+  const handleConfirmImport = () => {
+    if (previewData) {
+      onImport(previewData);
+      setShowModal(false);
+      resetForm();
+    }
+  };
+
   const resetForm = () => {
     setLinkedinUrl('');
     setManualData('');
     setError('');
     setImportMethod('manual');
+    setPreviewData(null);
+    setShowPreview(false);
   };
 
   const handleClose = () => {
@@ -194,6 +205,75 @@ Skills: JavaScript, React, Node.js, Python, AWS`}
                   </p>
                 </div>
               )}
+
+              {/* Preview Section */}
+              {showPreview && previewData && (
+                <div className="border-t border-gray-200 pt-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Preview Imported Data</h3>
+                  <div className="space-y-3 bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
+                    {previewData.fullName && (
+                      <div>
+                        <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded">
+                          Full Name
+                        </span>
+                        <p className="text-sm text-gray-900 mt-1">{previewData.fullName}</p>
+                      </div>
+                    )}
+                    {previewData.professionalTitle && (
+                      <div>
+                        <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded">
+                          Professional Title
+                        </span>
+                        <p className="text-sm text-gray-900 mt-1">{previewData.professionalTitle}</p>
+                      </div>
+                    )}
+                    {previewData.location && (
+                      <div>
+                        <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded">
+                          Location
+                        </span>
+                        <p className="text-sm text-gray-900 mt-1">{previewData.location}</p>
+                      </div>
+                    )}
+                    {previewData.linkedinUrl && (
+                      <div>
+                        <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded">
+                          LinkedIn URL
+                        </span>
+                        <p className="text-sm text-gray-900 mt-1 truncate">{previewData.linkedinUrl}</p>
+                      </div>
+                    )}
+                    {previewData.workExperience && (
+                      <div>
+                        <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded">
+                          Work Experience
+                        </span>
+                        <p className="text-sm text-gray-900 mt-1 whitespace-pre-wrap line-clamp-4">
+                          {previewData.workExperience}
+                        </p>
+                      </div>
+                    )}
+                    {previewData.education && (
+                      <div>
+                        <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded">
+                          Education
+                        </span>
+                        <p className="text-sm text-gray-900 mt-1 whitespace-pre-wrap line-clamp-3">
+                          {previewData.education}
+                        </p>
+                      </div>
+                    )}
+                    {previewData.skills && previewData.skills.length > 0 && (
+                      <div>
+                        <span className="text-xs font-medium text-green-700 bg-green-50 px-2 py-1 rounded">
+                          Skills
+                        </span>
+                        <p className="text-sm text-gray-900 mt-1">{previewData.skills.join(', ')}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
@@ -205,14 +285,24 @@ Skills: JavaScript, React, Node.js, Python, AWS`}
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                onClick={handleImport}
-                disabled={loading || (importMethod === 'url' && !linkedinUrl) || (importMethod === 'manual' && !manualData)}
-                className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Importing...' : 'Import Data'}
-              </button>
+              {showPreview ? (
+                <button
+                  type="button"
+                  onClick={handleConfirmImport}
+                  className="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Confirm & Import
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleImport}
+                  disabled={loading || (importMethod === 'url' && !linkedinUrl) || (importMethod === 'manual' && !manualData)}
+                  className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Importing...' : 'Import Data'}
+                </button>
+              )}
             </div>
           </div>
         </div>
