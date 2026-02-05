@@ -23,7 +23,7 @@ export default function ProfileDetailPage() {
 
   const loadProfileData = async () => {
     try {
-      const apiResponse = await fetch(`/api/user-profiles/${profileIdentifier}`);
+      const apiResponse = await fetch(`/api/profiles/${profileIdentifier}`);
       const responseData = await apiResponse.json();
       setProfileData(responseData.profile);
     } catch (err) {
@@ -36,8 +36,8 @@ export default function ProfileDetailPage() {
   const handleProfileSave = async (formData: any) => {
     try {
       const apiEndpoint = isCreatingNew
-        ? '/api/user-profiles'
-        : `/api/user-profiles/${profileIdentifier}`;
+        ? '/api/profiles'
+        : `/api/profiles/${profileIdentifier}`;
 
       const apiMethod = isCreatingNew ? 'POST' : 'PUT';
 
@@ -54,7 +54,7 @@ export default function ProfileDetailPage() {
       }
 
       alert('Profile saved successfully!');
-      router.push('/user-profiles');
+      router.push('/profiles');
     } catch (err) {
       console.error('Error saving profile:', err);
       alert('Failed to save profile. Please try again.');
@@ -74,7 +74,7 @@ export default function ProfileDetailPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <Link
-        href="/user-profiles"
+        href="/profiles"
         className="inline-flex items-center space-x-2 text-accent-teal hover:text-teal-700 mb-6"
       >
         <ArrowLeft size={20} />

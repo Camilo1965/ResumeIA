@@ -22,7 +22,7 @@ export function ProfileListingTable() {
 
   const fetchProfileRecords = async () => {
     try {
-      const apiResponse = await fetch('/api/user-profiles');
+      const apiResponse = await fetch('/api/profiles');
       const responseData = await apiResponse.json();
       setProfileRecords(responseData.profiles || []);
     } catch (err) {
@@ -57,7 +57,7 @@ export function ProfileListingTable() {
     }
 
     try {
-      const response = await fetch(`/api/user-profiles/${profileId}`, {
+      const response = await fetch(`/api/profiles/${profileId}`, {
         method: 'DELETE',
       });
 
@@ -115,14 +115,14 @@ export function ProfileListingTable() {
                       Delete
                     </button>
                     <button
-                      onClick={() => window.location.href = `/user-profiles/${record.profileId}`}
+                      onClick={() => window.location.href = `/profiles/${record.profileId}`}
                       className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                       title="Edit"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => window.location.href = `/user-profiles/${record.profileId}`}
+                      onClick={() => window.location.href = `/profiles/${record.profileId}`}
                       className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                       title="View"
                     >
