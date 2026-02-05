@@ -131,6 +131,23 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
           <span>Job Requirements (optional)</span>
         </label>
         <p className="text-xs text-gray-500 mb-2">Share job requirements for AI to tailor your resume</p>
+        
+        {/* ATS Tips */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+          <div className="flex items-start space-x-2">
+            <span className="text-blue-600 text-lg">💡</span>
+            <div className="flex-1">
+              <p className="text-xs font-semibold text-blue-900 mb-1">Tips for better ATS score:</p>
+              <ul className="text-xs text-blue-800 space-y-1">
+                <li>• Copy the complete job description</li>
+                <li>• Include all mentioned technologies</li>
+                <li>• Use the same keywords as the posting</li>
+                <li>• Avoid non-standard abbreviations</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         <textarea
           {...register('positionDetails')}
           className="input-field"
