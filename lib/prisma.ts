@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 
 const globalForPrismaInstance = globalThis as unknown as {
-  prismaInstance: PrismaClient | undefined
+  prismaInstance: PrismaClient | null
 }
 
-const createPrismaClient = () => {
+const createPrismaClient = (): PrismaClient | null => {
   if (process.env.DATABASE_URL) {
     return new PrismaClient();
   }
