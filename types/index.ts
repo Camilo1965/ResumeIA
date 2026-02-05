@@ -28,11 +28,11 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    resumeUID?: string;
-    resumeEmail?: string;
-    resumeName?: string;
-    resumePicture?: string;
-    resumeProvider?: string;
+    userId?: string;
+    email?: string;
+    name?: string;
+    picture?: string;
+    provider?: string;
   }
 }
 

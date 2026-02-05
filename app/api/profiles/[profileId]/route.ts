@@ -17,21 +17,10 @@ export async function GET(
 
     const sessionData = await getServerSession(resumeAIAuthConfiguration);
     
-    if (!sessionData?.user?.email) {
+    if (!sessionData?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-
-    const currentUser = await databaseClient.authenticatedUser.findUnique({
-      where: { emailAddress: sessionData.user.email },
-    });
-
-    if (!currentUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
       );
     }
 
@@ -49,7 +38,7 @@ export async function GET(
       );
     }
 
-    if (foundProfile.ownedByUserId !== currentUser.userId) {
+    if (foundProfile.ownedByUserId !== sessionData.user.id) {
       return NextResponse.json(
         { error: 'You do not have permission to access this profile' },
         { status: 403 }
@@ -80,21 +69,10 @@ export async function PUT(
 
     const sessionData = await getServerSession(resumeAIAuthConfiguration);
     
-    if (!sessionData?.user?.email) {
+    if (!sessionData?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-
-    const currentUser = await databaseClient.authenticatedUser.findUnique({
-      where: { emailAddress: sessionData.user.email },
-    });
-
-    if (!currentUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
       );
     }
 
@@ -112,7 +90,7 @@ export async function PUT(
       );
     }
 
-    if (existingProfile.ownedByUserId !== currentUser.userId) {
+    if (existingProfile.ownedByUserId !== sessionData.user.id) {
       return NextResponse.json(
         { error: 'You do not have permission to update this profile' },
         { status: 403 }
@@ -166,21 +144,10 @@ export async function DELETE(
 
     const sessionData = await getServerSession(resumeAIAuthConfiguration);
     
-    if (!sessionData?.user?.email) {
+    if (!sessionData?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-
-    const currentUser = await databaseClient.authenticatedUser.findUnique({
-      where: { emailAddress: sessionData.user.email },
-    });
-
-    if (!currentUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
       );
     }
 
@@ -198,7 +165,7 @@ export async function DELETE(
       );
     }
 
-    if (existingProfile.ownedByUserId !== currentUser.userId) {
+    if (existingProfile.ownedByUserId !== sessionData.user.id) {
       return NextResponse.json(
         { error: 'You do not have permission to delete this profile' },
         { status: 403 }

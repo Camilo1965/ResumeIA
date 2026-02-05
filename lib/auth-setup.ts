@@ -62,22 +62,22 @@ export const resumeAIAuthConfiguration: NextAuthOptions = {
   callbacks: {
     jwt: async ({ token, user, account }) => {
       if (user) {
-        token.resumeUID = user.id;
-        token.resumeEmail = user.email || undefined;
-        token.resumeName = user.name || undefined;
-        token.resumePicture = user.image || undefined;
+        token.userId = user.id;
+        token.email = user.email || undefined;
+        token.name = user.name || undefined;
+        token.picture = user.image || undefined;
       }
       if (account) {
-        token.resumeProvider = account.provider;
+        token.provider = account.provider;
       }
       return token;
     },
     session: async ({ session, token }) => {
       if (token && session.user) {
-        session.user.id = token.resumeUID as string;
-        session.user.email = token.resumeEmail as string;
-        session.user.name = token.resumeName as string;
-        session.user.image = token.resumePicture as string;
+        session.user.id = token.userId as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.image = token.picture as string;
       }
       return session;
     },

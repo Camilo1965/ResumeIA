@@ -22,26 +22,15 @@ export async function GET() {
 
     const sessionData = await getServerSession(resumeAIAuthConfiguration);
     
-    if (!sessionData?.user?.email) {
+    if (!sessionData?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const currentUser = await databaseClient.authenticatedUser.findUnique({
-      where: { emailAddress: sessionData.user.email },
-    });
-
-    if (!currentUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
-    }
-
     const userProfiles = await databaseClient.userProfile.findMany({
-      where: { ownedByUserId: currentUser.userId },
+      where: { ownedByUserId: sessionData.user.id },
       orderBy: { profileCreatedAt: 'desc' },
     });
 
@@ -84,21 +73,10 @@ export async function POST(request: NextRequest) {
 
     const sessionData = await getServerSession(resumeAIAuthConfiguration);
     
-    if (!sessionData?.user?.email) {
+    if (!sessionData?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
-      );
-    }
-
-    const currentUser = await databaseClient.authenticatedUser.findUnique({
-      where: { emailAddress: sessionData.user.email },
-    });
-
-    if (!currentUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
       );
     }
 
@@ -106,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     const newProfile = await databaseClient.userProfile.create({
       data: {
-        ownedByUserId: currentUser.userId,
+        ownedByUserId: sessionData.user.id,
         completeName: requestData.completeName,
         jobTitle: requestData.jobTitle || null,
         contactPhone: requestData.contactPhone,
