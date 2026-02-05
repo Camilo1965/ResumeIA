@@ -37,10 +37,35 @@ export default function ResumeGeneratorPage() {
     }
   };
 
-  const handleSaveDownload = () => {
-    // TODO: Implement PDF download
-    if (cvContent) {
-      alert('PDF download will be implemented soon!');
+  const handleSaveDownload = async () => {
+    if (!cvContent) return;
+
+    try {
+      const response = await fetch('/api/resume/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cvContent }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+
+      // Create a blob from the response and download it
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `resume-${Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('Failed to download PDF. Please try again.');
     }
   };
 
