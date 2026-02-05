@@ -29,7 +29,7 @@ export async function GET() {
       orderBy: { cvUpdatedAt: 'desc' },
     });
 
-    const formattedHistory = allCVs.map((cv) => ({
+    const formattedHistory = allCVs.map((cv: any) => ({
       cvId: cv.cvId,
       profileOwnerName: cv.userProfile.completeName,
       organizationName: cv.organizationName,

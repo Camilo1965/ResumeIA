@@ -22,7 +22,7 @@ export async function GET() {
       orderBy: { profileCreatedAt: 'desc' },
     });
 
-    const formattedProfiles = allProfiles.map((p) => ({
+    const formattedProfiles = allProfiles.map((p: any) => ({
       profileId: p.profileId,
       completeName: p.completeName,
       technicalSkills: p.technicalSkills || 'Not specified',

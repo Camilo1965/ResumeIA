@@ -51,6 +51,28 @@ export function ProfileListingTable() {
     }
   };
 
+  const handleDeleteProfile = async (profileId: number) => {
+    if (!confirm('Are you sure you want to delete this profile?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/user-profiles/${profileId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete profile');
+      }
+
+      alert('Profile deleted successfully');
+      fetchProfileRecords();
+    } catch (err) {
+      console.error('Error deleting profile:', err);
+      alert('Failed to delete profile. Please try again.');
+    }
+  };
+
   if (loadingState) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -84,12 +106,29 @@ export function ProfileListingTable() {
                 <td className="px-6 py-4 text-sm text-gray-600">{record.cityLocation}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{record.ownerName}</td>
                 <td className="px-6 py-4 text-sm">
-                  <button
-                    onClick={() => window.location.href = `/user-profiles/${record.profileId}`}
-                    className="text-accent-teal hover:text-teal-700 font-medium"
-                  >
-                    Edit
-                  </button>
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={() => handleDeleteProfile(record.profileId)}
+                      className="text-red-600 hover:text-red-800 font-medium transition-colors"
+                      title="Delete"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={() => window.location.href = `/user-profiles/${record.profileId}`}
+                      className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                      title="Edit"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => window.location.href = `/user-profiles/${record.profileId}`}
+                      className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                      title="View"
+                    >
+                      View
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

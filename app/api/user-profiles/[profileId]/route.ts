@@ -83,3 +83,35 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ profileId: string }> }
+) {
+  try {
+    if (!databaseClient) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      );
+    }
+
+    const params = await context.params;
+    const profileIdentifier = parseInt(params.profileId, 10);
+
+    await databaseClient.userProfile.delete({
+      where: { profileId: profileIdentifier },
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Profile deleted successfully' 
+    });
+  } catch (dbError) {
+    console.error('Error deleting profile:', dbError);
+    return NextResponse.json(
+      { error: 'Failed to delete profile' },
+      { status: 500 }
+    );
+  }
+}
