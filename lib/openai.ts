@@ -29,7 +29,12 @@ export async function generateCVContentWithAI(
       messages: [
         {
           role: 'system',
-          content: 'You are an expert CV writer specializing in tailoring resumes to specific job positions.',
+          content: `You are an expert resume writer specializing in creating ATS-friendly resumes. You:
+- Highlight relevant experience for target positions
+- Use strong action verbs and quantifiable achievements
+- Incorporate keywords from job requirements naturally
+- Create compelling, metric-driven content
+- Format responses as valid JSON only, no markdown or code blocks`,
         },
         {
           role: 'user',
@@ -57,57 +62,96 @@ function buildPromptForCVGeneration(
   organizationName: string,
   positionDetails?: string
 ): string {
-  return `Create a professional CV content for the following:
+  return `You are an expert resume writer. Create a professional, ATS-friendly resume tailored to the target position.
 
-Position: ${positionTitle} at ${organizationName}
-${positionDetails ? `Job Requirements:\n${positionDetails}\n` : ''}
+TARGET POSITION: ${positionTitle} at ${organizationName}
+${positionDetails ? `\nJOB REQUIREMENTS:\n${positionDetails}\n` : ''}
 
-Candidate Information:
+CANDIDATE INFORMATION:
 - Name: ${profileInfo.completeName}
-- Title: ${profileInfo.jobTitle || 'Software Engineer'}
+- Current Title: ${profileInfo.jobTitle || 'Software Engineer'}
 - Location: ${profileInfo.cityLocation}
 - Phone: ${profileInfo.contactPhone}
 - Email: ${profileInfo.contactEmail}
 ${profileInfo.linkedinProfile ? `- LinkedIn: ${profileInfo.linkedinProfile}` : ''}
 
-Work History:
+WORK HISTORY:
 ${profileInfo.jobHistory || 'No work history provided'}
 
-Education:
+EDUCATION:
 ${profileInfo.academicHistory || 'No education history provided'}
 
-Technical Skills:
+TECHNICAL SKILLS:
 ${profileInfo.technicalSkills || 'No technical skills provided'}
 
-Generate a JSON response with the following structure:
+INSTRUCTIONS:
+1. Create a compelling PROFESSIONAL SUMMARY (3-4 sentences) that:
+   - Highlights years of experience and key expertise
+   - Uses keywords from job requirements
+   - Emphasizes quantifiable achievements
+   - Aligns with the target position
+   - Use **bold** for important technologies and metrics
+
+2. For PROFESSIONAL EXPERIENCE, provide 5-8 bullet points per role that:
+   - Start with strong action verbs (Led, Architected, Implemented, Drove, etc.)
+   - Include quantifiable metrics (percentages, numbers, scale)
+   - Highlight relevant technologies in **bold**
+   - Focus on impact and results
+   - Tailor achievements to match job requirements
+
+3. For SKILLS, organize into these categories:
+   - Programming & Development
+   - AI & Machine Learning (if applicable)
+   - Documentation & Quality Assurance
+   - Team Collaboration & Stakeholder Engagement
+
+4. Include a brief role description (1-2 lines) for each work experience before the bullet points
+
+RESPOND WITH ONLY VALID JSON in this exact structure:
 {
-  "professionalOverview": "A compelling 3-4 sentence summary tailored to the job",
+  "professionalOverview": "3-4 sentence summary with **bold keywords**",
   "workExperienceList": [
     {
       "companyName": "Company Name",
-      "dateRange": "Start - End",
-      "roleTitle": "Position Title",
-      "roleDescription": "Brief role description",
-      "achievements": ["Achievement with metrics", "Another achievement"],
-      "relevantTechnologies": ["Tech1", "Tech2"]
+      "dateRange": "Month Year - Month Year (or Present)",
+      "roleTitle": "Job Title",
+      "roleDescription": "Brief 1-2 line description of the role with **key technologies**",
+      "achievements": [
+        "Action verb + achievement with **25%** metric and **technology**",
+        "Another achievement with quantifiable impact",
+        "Achievement showing collaboration or leadership",
+        "Achievement demonstrating technical expertise",
+        "Achievement aligned with job requirements"
+      ],
+      "relevantTechnologies": ["Tech1", "Tech2", "Tech3", "Tech4"]
     }
   ],
   "educationList": [
     {
       "institutionName": "University Name",
       "dateRange": "Year - Year",
-      "degreeObtained": "Degree Type"
+      "degreeObtained": "Degree Title (e.g., B.S. in Computer Science)"
     }
   ],
   "skillCategories": [
     {
       "categoryName": "Programming & Development",
-      "skillsList": ["Skill1", "Skill2"]
+      "skillsList": ["JavaScript", "TypeScript", "Python", "React", "Node.js"]
+    },
+    {
+      "categoryName": "AI & Machine Learning",
+      "skillsList": ["TensorFlow", "PyTorch", "OpenAI API", "LangChain"]
+    },
+    {
+      "categoryName": "Documentation & Quality Assurance",
+      "skillsList": ["Jest", "Pytest", "Git", "CI/CD", "Agile"]
+    },
+    {
+      "categoryName": "Team Collaboration & Stakeholder Engagement",
+      "skillsList": ["Technical Leadership", "Code Review", "Mentoring", "Cross-functional Collaboration"]
     }
   ]
-}
-
-Focus on quantifiable achievements and keywords from the job requirements.`;
+}`;
 }
 
 function parseCVContentFromAI(aiResponse: string, profileInfo: ProfileData): CVContent {
@@ -143,37 +187,42 @@ function createMockCVContent(
   return {
     headerInfo: {
       fullName: profileInfo.completeName,
-      professionalRole: profileInfo.jobTitle || 'Senior Software Engineer & AI Developer',
+      professionalRole: positionTitle || profileInfo.jobTitle || 'Senior Software Engineer',
       locationText: profileInfo.cityLocation,
       phoneNumber: profileInfo.contactPhone,
       emailAddress: profileInfo.contactEmail,
       linkedinUrl: profileInfo.linkedinProfile,
     },
-    professionalOverview: `Highly experienced software engineer with **8+ years** of expertise in full-stack development and **AI/ML integration**. Proven track record of delivering **scalable solutions** and leading **cross-functional teams** to achieve **30% efficiency improvements**. Passionate about leveraging cutting-edge technologies to solve complex business challenges.`,
+    professionalOverview: `Results-driven software engineer with **8+ years** of experience specializing in **full-stack development** and **AI/ML solutions**. Proven track record of architecting **scalable microservices** that serve **millions of users** and implementing **machine learning models** that increased efficiency by **30%**. Skilled in **React**, **Node.js**, **Python**, and **cloud technologies**. Passionate about delivering high-impact solutions and mentoring engineering teams.`,
     workExperienceList: [
       {
         companyName: 'Tech Innovations Corp',
-        dateRange: '2020 - Present',
+        dateRange: 'January 2020 - Present',
         roleTitle: 'Senior Software Engineer',
-        roleDescription: 'Leading development of AI-powered applications and mentoring junior developers',
+        roleDescription: 'Leading development of AI-powered enterprise applications using **React**, **Node.js**, and **Python**, while mentoring a team of 6 engineers and driving architectural decisions.',
         achievements: [
-          'Architected and deployed microservices infrastructure reducing deployment time by **40%**',
-          'Implemented ML models improving recommendation accuracy by **25%**',
-          'Led team of 6 developers delivering features **15% ahead of schedule**',
+          'Architected and deployed **microservices infrastructure** on **AWS**, reducing deployment time by **40%** and improving system reliability to **99.9% uptime**',
+          'Implemented **machine learning recommendation system** using **TensorFlow** that improved user engagement by **25%** and drove **$2M in additional revenue**',
+          'Led team of **6 developers** in migrating legacy monolith to modern architecture, delivering **15% ahead of schedule** with zero production incidents',
+          'Established **CI/CD pipelines** and **automated testing** frameworks, decreasing bugs in production by **35%** and accelerating release cycles',
+          'Championed code quality initiatives including comprehensive code reviews and best practices documentation, improving team velocity by **20%**',
+          'Collaborated with product and design teams to deliver **5 major features** that increased customer satisfaction scores by **18%**',
         ],
-        relevantTechnologies: ['Python', 'TypeScript', 'React', 'AWS', 'TensorFlow'],
+        relevantTechnologies: ['React', 'TypeScript', 'Node.js', 'Python', 'AWS', 'TensorFlow', 'Docker', 'Kubernetes'],
       },
       {
         companyName: 'Digital Solutions Ltd',
-        dateRange: '2018 - 2020',
+        dateRange: 'March 2018 - December 2019',
         roleTitle: 'Full Stack Developer',
-        roleDescription: 'Developed enterprise web applications and RESTful APIs',
+        roleDescription: 'Developed and maintained enterprise web applications and **RESTful APIs** serving **50,000+ active users**, utilizing **React**, **Node.js**, and **PostgreSQL**.',
         achievements: [
-          'Built customer portal serving **50,000+ users** with **99.9% uptime**',
-          'Optimized database queries reducing response time by **30%**',
-          'Implemented CI/CD pipeline decreasing bugs in production by **20%**',
+          'Built customer portal from scratch using **React** and **Node.js**, serving **50,000+ users** with **99.9% uptime** and **sub-200ms response times**',
+          'Optimized database queries and implemented caching strategies, reducing API response time by **30%** and database load by **40%**',
+          'Implemented comprehensive **CI/CD pipeline** using **Jenkins** and **Docker**, decreasing deployment time from hours to **15 minutes**',
+          'Developed **automated testing suite** with **90% code coverage**, reducing production bugs by **20%** and improving code maintainability',
+          'Collaborated with **cross-functional teams** to gather requirements and deliver solutions that met **100% of acceptance criteria**',
         ],
-        relevantTechnologies: ['Node.js', 'React', 'PostgreSQL', 'Docker'],
+        relevantTechnologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'Docker', 'Jenkins', 'Git'],
       },
     ],
     educationList: [
@@ -186,19 +235,19 @@ function createMockCVContent(
     skillCategories: [
       {
         categoryName: 'Programming & Development',
-        skillsList: ['JavaScript/TypeScript', 'Python', 'Java', 'C++', 'Go'],
+        skillsList: ['JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'React', 'Next.js', 'Node.js', 'Express', 'Django'],
       },
       {
         categoryName: 'AI & Machine Learning',
-        skillsList: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'OpenAI API', 'LangChain'],
+        skillsList: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'OpenAI API', 'LangChain', 'Neural Networks', 'NLP'],
       },
       {
         categoryName: 'Documentation & Quality Assurance',
-        skillsList: ['Jest', 'Pytest', 'Selenium', 'Git', 'Agile/Scrum'],
+        skillsList: ['Jest', 'Pytest', 'Selenium', 'Git', 'CI/CD', 'Jenkins', 'GitHub Actions', 'Agile/Scrum'],
       },
       {
         categoryName: 'Team Collaboration & Stakeholder Engagement',
-        skillsList: ['Technical Leadership', 'Code Review', 'Mentoring', 'Project Management'],
+        skillsList: ['Technical Leadership', 'Code Review', 'Mentoring', 'Project Management', 'Cross-functional Collaboration'],
       },
     ],
   };
