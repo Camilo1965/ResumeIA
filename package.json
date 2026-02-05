@@ -1,0 +1,51 @@
+{
+  "name": "resumeia",
+  "version": "1.0.0",
+  "description": "Aplicación web para generar CVs/Resumes personalizados con Inteligencia Artificial.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Camilo1965/ResumeIA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Camilo1965/ResumeIA/issues"
+  },
+  "homepage": "https://github.com/Camilo1965/ResumeIA#readme",
+  "dependencies": {
+    "@prisma/client": "^7.3.0",
+    "@react-pdf/renderer": "^4.3.2",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^25.2.1",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.24",
+    "lucide-react": "^0.563.0",
+    "next": "^16.1.6",
+    "openai": "^6.18.0",
+    "postcss": "^8.5.6",
+    "prisma": "^7.3.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-hook-form": "^7.71.1",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.6"
+  }
+}

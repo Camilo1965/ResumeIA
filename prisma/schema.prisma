@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model UserProfile {
+  profileId         Int       @id @default(autoincrement())
+  completeName      String
+  jobTitle          String?
+  contactPhone      String
+  contactEmail      String
+  cityLocation      String
+  linkedinProfile   String?
+  displayLinkedin   Boolean   @default(true)
+  jobHistory        String?   @db.Text
+  academicHistory   String?   @db.Text
+  technicalSkills   String?
+  selectedTemplate  String    @default("minimalist")
+  bgPattern         String    @default("hexagon")
+  profileCreatedAt  DateTime  @default(now())
+  profileUpdatedAt  DateTime  @updatedAt
+  generatedCVs      GeneratedCV[]
+}
+
+model GeneratedCV {
+  cvId              Int           @id @default(autoincrement())
+  userProfileId     Int
+  userProfile       UserProfile   @relation(fields: [userProfileId], references: [profileId])
+  positionTitle     String
+  organizationName  String
+  jobPostingUrl     String?
+  positionDetails   String?       @db.Text
+  aiGeneratedText   String        @db.Text
+  pdfFileUrl        String?
+  cvCreatedAt       DateTime      @default(now())
+  cvUpdatedAt       DateTime      @updatedAt
+}
