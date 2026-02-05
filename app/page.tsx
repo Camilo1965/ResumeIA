@@ -37,6 +37,38 @@ export default function ResumeGeneratorPage() {
     }
   };
 
+  const handleSaveDownload = async () => {
+    if (!cvContent) return;
+
+    try {
+      const response = await fetch('/api/resume/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cvContent }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+
+      // Create a blob from the response and download it
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `resume-${Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('Failed to download PDF. Please try again.');
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Resume Generator</h1>
@@ -44,7 +76,12 @@ export default function ResumeGeneratorPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Form Section */}
         <div className="bg-white rounded-lg shadow-lg p-6 card-shadow">
-          <CVBuilderForm onGenerateCV={handleGenerateCV} isGenerating={isGenerating} />
+          <CVBuilderForm 
+            onGenerateCV={handleGenerateCV} 
+            isGenerating={isGenerating}
+            onSaveDownload={handleSaveDownload}
+            hasGeneratedCV={!!cvContent}
+          />
         </div>
 
         {/* Preview Section */}

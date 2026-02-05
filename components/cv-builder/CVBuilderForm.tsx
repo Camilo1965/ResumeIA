@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Briefcase, Building2, Link2, FileText } from 'lucide-react';
+import { Briefcase, Building2, Link2, FileText, Download, FileCheck } from 'lucide-react';
 import { TemplateVariant, BackgroundPattern } from '@/types';
+
+// Mock profile name - replace with actual profile fetch when authentication is implemented
+const MOCK_PROFILE_NAME = 'John Doe';
 
 interface CVFormData {
   positionTitle: string;
@@ -18,9 +21,11 @@ interface CVFormData {
 interface CVBuilderFormProps {
   onGenerateCV: (data: CVFormData) => Promise<void>;
   isGenerating: boolean;
+  onSaveDownload?: () => void;
+  hasGeneratedCV?: boolean;
 }
 
-export function CVBuilderForm({ onGenerateCV, isGenerating }: CVBuilderFormProps) {
+export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasGeneratedCV }: CVBuilderFormProps) {
   const { register, handleSubmit, formState: { errors } } = useForm<CVFormData>({
     defaultValues: {
       displayLinkedin: true,
@@ -31,6 +36,13 @@ export function CVBuilderForm({ onGenerateCV, isGenerating }: CVBuilderFormProps
 
   const [activeTemplate, setActiveTemplate] = useState<TemplateVariant>('minimalist');
   const [activeBackground, setActiveBackground] = useState<BackgroundPattern>('hexagon');
+  const [profileName, setProfileName] = useState<string>('');
+
+  useEffect(() => {
+    // Fetch profile name (for now use mock data)
+    // TODO: Replace with actual profile fetch when authentication is implemented
+    setProfileName(MOCK_PROFILE_NAME);
+  }, []);
 
   const onSubmitForm = async (formData: CVFormData) => {
     formData.selectedTemplate = activeTemplate;
@@ -40,7 +52,20 @@ export function CVBuilderForm({ onGenerateCV, isGenerating }: CVBuilderFormProps
 
   return (
     <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6">
-      {/* Job Title */}
+      {/* Profile Header */}
+      {profileName && (
+        <div className="mb-6 pb-4 border-b-2 border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Profile: {profileName}
+          </h2>
+        </div>
+      )}
+
+      {/* Job Information Section */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-700 mb-3">Job Information</h3>
+        
+        {/* Job Title */}
       <div>
         <label className="label-text flex items-center space-x-2">
           <Briefcase size={16} />
@@ -105,12 +130,14 @@ export function CVBuilderForm({ onGenerateCV, isGenerating }: CVBuilderFormProps
           <FileText size={16} />
           <span>Job Requirements (optional)</span>
         </label>
+        <p className="text-xs text-gray-500 mb-2">Share job requirements for AI to tailor your resume</p>
         <textarea
           {...register('positionDetails')}
           className="input-field"
           rows={6}
           placeholder="Paste the job description here to tailor your resume..."
         />
+      </div>
       </div>
 
       {/* Resume Template Selector */}
@@ -161,20 +188,23 @@ export function CVBuilderForm({ onGenerateCV, isGenerating }: CVBuilderFormProps
       </div>
 
       {/* Action Buttons */}
-      <div className="flex space-x-4">
+      <div className="flex space-x-4 pt-4">
         <button
           type="submit"
           disabled={isGenerating}
-          className="btn-primary flex-1 disabled:opacity-50"
+          className="flex-1 flex items-center justify-center space-x-2 px-6 py-3 border-2 border-gray-400 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          {isGenerating ? 'Generating...' : 'Generate Resume'}
+          <FileCheck size={20} />
+          <span>{isGenerating ? 'Generating...' : 'Generate Resume'}</span>
         </button>
         <button
           type="button"
-          className="btn-secondary"
-          disabled={isGenerating}
+          onClick={onSaveDownload}
+          disabled={isGenerating || !hasGeneratedCV}
+          className="flex items-center justify-center space-x-2 px-6 py-3 bg-accent-gold text-white font-semibold rounded-lg hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          Save & Download
+          <Download size={20} />
+          <span>Save & Download</span>
         </button>
       </div>
     </form>
