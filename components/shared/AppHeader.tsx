@@ -20,7 +20,7 @@ export function AppHeader() {
               <span>Profiles</span>
             </Link>
             <Link 
-              href="/cv-history" 
+              href="/history" 
               className="flex items-center space-x-2 hover:text-accent-gold transition-colors"
             >
               <HistoryIcon size={20} />
