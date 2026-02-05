@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { databaseClient } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { resumeAIAuthConfiguration } from '@/lib/auth-setup';
 
 export async function GET(
   request: NextRequest,
@@ -10,6 +12,15 @@ export async function GET(
       return NextResponse.json(
         { error: 'Database not configured' },
         { status: 500 }
+      );
+    }
+
+    const sessionData = await getServerSession(resumeAIAuthConfiguration);
+    
+    if (!sessionData?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
       );
     }
 
@@ -24,6 +35,13 @@ export async function GET(
       return NextResponse.json(
         { error: 'Profile not found' },
         { status: 404 }
+      );
+    }
+
+    if (foundProfile.ownedByUserId !== sessionData.user.id) {
+      return NextResponse.json(
+        { error: 'You do not have permission to access this profile' },
+        { status: 403 }
       );
     }
 
@@ -49,8 +67,36 @@ export async function PUT(
       );
     }
 
+    const sessionData = await getServerSession(resumeAIAuthConfiguration);
+    
+    if (!sessionData?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const params = await context.params;
     const profileIdentifier = parseInt(params.profileId, 10);
+
+    const existingProfile = await databaseClient.userProfile.findUnique({
+      where: { profileId: profileIdentifier },
+    });
+
+    if (!existingProfile) {
+      return NextResponse.json(
+        { error: 'Profile not found' },
+        { status: 404 }
+      );
+    }
+
+    if (existingProfile.ownedByUserId !== sessionData.user.id) {
+      return NextResponse.json(
+        { error: 'You do not have permission to update this profile' },
+        { status: 403 }
+      );
+    }
+
     const requestData = await request.json();
 
     const updatedProfile = await databaseClient.userProfile.update({
@@ -96,8 +142,35 @@ export async function DELETE(
       );
     }
 
+    const sessionData = await getServerSession(resumeAIAuthConfiguration);
+    
+    if (!sessionData?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const params = await context.params;
     const profileIdentifier = parseInt(params.profileId, 10);
+
+    const existingProfile = await databaseClient.userProfile.findUnique({
+      where: { profileId: profileIdentifier },
+    });
+
+    if (!existingProfile) {
+      return NextResponse.json(
+        { error: 'Profile not found' },
+        { status: 404 }
+      );
+    }
+
+    if (existingProfile.ownedByUserId !== sessionData.user.id) {
+      return NextResponse.json(
+        { error: 'You do not have permission to delete this profile' },
+        { status: 403 }
+      );
+    }
 
     await databaseClient.userProfile.delete({
       where: { profileId: profileIdentifier },

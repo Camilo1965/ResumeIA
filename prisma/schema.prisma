@@ -7,8 +7,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model AuthenticatedUser {
+  userId            String    @id @default(cuid())
+  fullName          String?
+  emailAddress      String    @unique
+  verifiedEmail     DateTime?
+  avatarImageUrl    String?
+  hashedPassword    String?
+  registeredAt      DateTime  @default(now())
+  lastModified      DateTime  @updatedAt
+  oauthAccounts     OAuthAccount[]
+  activeSessions    UserSession[]
+  userProfiles      UserProfile[]
+}
+
+model OAuthAccount {
+  accountId         String  @id @default(cuid())
+  ownerId           String
+  accountOwner      AuthenticatedUser @relation(fields: [ownerId], references: [userId], onDelete: Cascade)
+  providerType      String
+  providerName      String
+  externalAccountId String
+  refreshToken      String? @db.Text
+  accessToken       String? @db.Text
+  expirationTime    Int?
+  tokenCategory     String?
+  permissionScope   String?
+  identityToken     String? @db.Text
+  sessionStatus     String?
+  @@unique([providerName, externalAccountId])
+}
+
+model UserSession {
+  sessionId         String   @id @default(cuid())
+  uniqueToken       String   @unique
+  belongsToUser     String
+  sessionOwner      AuthenticatedUser @relation(fields: [belongsToUser], references: [userId], onDelete: Cascade)
+  expiresOn         DateTime
+}
+
 model UserProfile {
   profileId         Int       @id @default(autoincrement())
+  ownedByUserId     String
+  profileOwner      AuthenticatedUser @relation(fields: [ownedByUserId], references: [userId], onDelete: Cascade)
   completeName      String
   jobTitle          String?
   contactPhone      String

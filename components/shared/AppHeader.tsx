@@ -1,7 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import { FileText, Users, History as HistoryIcon } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { AuthenticatedUserMenu } from '@/components/auth-ui/AuthenticatedUserMenu';
+import { SignInPromptButton } from '@/components/auth-ui/SignInPromptButton';
 
 export function AppHeader() {
+  const { data: sessionData } = useSession();
+
   return (
     <header className="bg-primary-dark text-white shadow-lg">
       <div className="container mx-auto px-4">
@@ -29,9 +36,7 @@ export function AppHeader() {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 bg-accent-gold rounded-full flex items-center justify-center font-semibold">
-              U
-            </div>
+            {sessionData?.user ? <AuthenticatedUserMenu /> : <SignInPromptButton />}
           </div>
         </div>
       </div>

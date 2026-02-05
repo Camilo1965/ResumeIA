@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { databaseClient } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { resumeAIAuthConfiguration } from '@/lib/auth-setup';
 
 export async function GET() {
   try {
@@ -18,11 +20,21 @@ export async function GET() {
       });
     }
 
-    const allProfiles = await databaseClient.userProfile.findMany({
+    const sessionData = await getServerSession(resumeAIAuthConfiguration);
+    
+    if (!sessionData?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const userProfiles = await databaseClient.userProfile.findMany({
+      where: { ownedByUserId: sessionData.user.id },
       orderBy: { profileCreatedAt: 'desc' },
     });
 
-    const formattedProfiles = allProfiles.map((p: any) => ({
+    const formattedProfiles = userProfiles.map((p: any) => ({
       profileId: p.profileId,
       completeName: p.completeName,
       technicalSkills: p.technicalSkills || 'Not specified',
@@ -59,10 +71,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const sessionData = await getServerSession(resumeAIAuthConfiguration);
+    
+    if (!sessionData?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const requestData = await request.json();
 
     const newProfile = await databaseClient.userProfile.create({
       data: {
+        ownedByUserId: sessionData.user.id,
         completeName: requestData.completeName,
         jobTitle: requestData.jobTitle || null,
         contactPhone: requestData.contactPhone,
