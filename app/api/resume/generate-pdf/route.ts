@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import React from 'react';
-import ReactPDF from '@react-pdf/renderer';
-import { Document } from '@react-pdf/renderer';
+import { pdf } from '@react-pdf/renderer';
 import { CVPDFDocument } from '@/components/cv-builder/CVPDFDocument';
 import { CVContent } from '@/types';
 
@@ -16,15 +15,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate PDF using renderToBuffer - cast to any to bypass type checking
+    // Generate PDF using the pdf() method from @react-pdf/renderer v4
     const pdfDoc = React.createElement(CVPDFDocument, { 
       cvContent: cvContent as CVContent 
-    }) as any;
+    });
     
-    const pdfBuffer = await ReactPDF.renderToBuffer(pdfDoc);
+    const pdfInstance = pdf(pdfDoc as any);
+    const pdfBlob = await pdfInstance.toBlob();
+    
+    // Convert Blob to ArrayBuffer
+    const arrayBuffer = await pdfBlob.arrayBuffer();
 
-    // Return PDF as response - convert Buffer to Uint8Array
-    return new NextResponse(new Uint8Array(pdfBuffer), {
+    // Return PDF as response
+    return new NextResponse(arrayBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="resume-${Date.now()}.pdf"`,
