@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
       jobPostingUrl,
       positionDetails,
       displayLinkedin,
+      cvLanguage = 'en',
     } = requestBody;
 
     // Validate required fields
@@ -70,7 +71,8 @@ export async function POST(request: NextRequest) {
       },
       positionTitle,
       organizationName,
-      positionDetails
+      positionDetails,
+      cvLanguage as 'en' | 'es'
     );
 
     // Override LinkedIn display if specified
