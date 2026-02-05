@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { User, Briefcase, Phone, Mail, MapPin, Linkedin, GraduationCap, Code } from 'lucide-react';
 import { TemplateVariant, BackgroundPattern } from '@/types';
+import { LinkedInImportButton, LinkedInImportedData } from './LinkedInImportButton';
 
 interface ProfileFormInputs {
   completeName: string;
@@ -24,7 +25,7 @@ interface ProfileEditorProps {
 }
 
 export function ProfileEditorForm({ existingProfileData, onSaveProfile }: ProfileEditorProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<ProfileFormInputs>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<ProfileFormInputs>({
     defaultValues: existingProfileData || {
       displayLinkedin: true,
     },
@@ -37,6 +38,31 @@ export function ProfileEditorForm({ existingProfileData, onSaveProfile }: Profil
     existingProfileData?.bgPattern || 'hexagon'
   );
   const [savingInProgress, setSavingInProgress] = useState(false);
+
+  const handleLinkedInImport = (data: LinkedInImportedData) => {
+    // Auto-fill form fields with imported data
+    if (data.fullName) {
+      setValue('completeName', data.fullName);
+    }
+    if (data.professionalTitle) {
+      setValue('jobTitle', data.professionalTitle);
+    }
+    if (data.location) {
+      setValue('cityLocation', data.location);
+    }
+    if (data.linkedinUrl) {
+      setValue('linkedinProfile', data.linkedinUrl);
+    }
+    if (data.workExperience) {
+      setValue('jobHistory', data.workExperience);
+    }
+    if (data.education) {
+      setValue('academicHistory', data.education);
+    }
+    if (data.skills && data.skills.length > 0) {
+      setValue('technicalSkills', data.skills.join(', '));
+    }
+  };
 
   const submitProfileData = async (formInputs: ProfileFormInputs) => {
     setSavingInProgress(true);
@@ -61,6 +87,17 @@ export function ProfileEditorForm({ existingProfileData, onSaveProfile }: Profil
 
   return (
     <form onSubmit={handleSubmit(submitProfileData)} className="space-y-6">
+      {/* LinkedIn Import Button */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-semibold text-blue-900 mb-1">Import from LinkedIn</h3>
+          <p className="text-xs text-blue-700">
+            Quickly fill in your profile information by importing data from your LinkedIn profile.
+          </p>
+        </div>
+        <LinkedInImportButton onImport={handleLinkedInImport} />
+      </div>
+
       {/* Full Name */}
       <div>
         <label className="label-text flex items-center space-x-2">

@@ -108,3 +108,22 @@ export interface SkillCategory {
   categoryName: string;
   skillsList: string[];
 }
+
+export interface LinkedInImportRequest {
+  linkedinUrl?: string;
+  manualData?: string;
+}
+
+export interface LinkedInImportResponse {
+  success: boolean;
+  data?: {
+    fullName?: string;
+    professionalTitle?: string;
+    location?: string;
+    linkedinUrl?: string;
+    workExperience?: string;
+    education?: string;
+    skills?: string[];
+  };
+  error?: string;
+}
