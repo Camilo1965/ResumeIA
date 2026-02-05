@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { databaseClient } from '@/lib/prisma';
 import { openAIService } from '@/lib/openai';
+import { atsAnalyzer } from '@/lib/ats-analyzer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -78,6 +79,21 @@ export async function POST(request: NextRequest) {
       cvContent.headerInfo.linkedinUrl = undefined;
     }
 
+    // Analyze ATS compatibility
+    let atsScore = null;
+    let atsAnalysisJson = null;
+    try {
+      const atsAnalysis = await atsAnalyzer.analyzeATSCompatibility(
+        cvContent,
+        positionDetails
+      );
+      atsScore = atsAnalysis.overallScore;
+      atsAnalysisJson = JSON.stringify(atsAnalysis);
+    } catch (atsError) {
+      console.log('Could not analyze ATS:', atsError);
+      // Continue without ATS analysis
+    }
+
     // Save to database (if available)
     if (databaseClient) {
       try {
@@ -89,6 +105,8 @@ export async function POST(request: NextRequest) {
             jobPostingUrl: jobPostingUrl || null,
             positionDetails: positionDetails || null,
             aiGeneratedText: JSON.stringify(cvContent),
+            atsScore: atsScore,
+            atsAnalysis: atsAnalysisJson,
           },
         });
       } catch (dbError) {

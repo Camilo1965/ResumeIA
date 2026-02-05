@@ -70,6 +70,8 @@ export interface GeneratedCVData {
   positionDetails?: string;
   aiGeneratedText: string;
   pdfFileUrl?: string;
+  atsScore?: number;
+  atsAnalysis?: string;
   cvCreatedAt?: Date;
   cvUpdatedAt?: Date;
 }
@@ -108,3 +110,33 @@ export interface SkillCategory {
   categoryName: string;
   skillsList: string[];
 }
+
+// ATS Analysis Types
+export interface ATSAnalysisResult {
+  overallScore: number;
+  breakdown: {
+    keywordMatch: ATSScoreDetail;
+    formatScore: ATSScoreDetail;
+    experienceRelevance: ATSScoreDetail;
+    skillsMatch: ATSScoreDetail;
+    education: ATSScoreDetail;
+  };
+  keywords: {
+    found: string[];
+    missing: string[];
+    optional: string[];
+  };
+  recommendations: string[];
+}
+
+export interface ATSScoreDetail {
+  score: number;
+  max: number;
+  details: string[];
+}
+
+export interface ATSAnalysisRequest {
+  cvContent: CVContent;
+  jobRequirements?: string;
+}
+

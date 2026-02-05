@@ -1,14 +1,17 @@
 'use client';
 
 import { FileText } from 'lucide-react';
-import { CVContent } from '@/types';
+import { CVContent, ATSAnalysisResult } from '@/types';
+import { ATSScoreBadge } from '@/components/ats/ATSScoreBadge';
 
 interface CVPreviewPanelProps {
   cvContent: CVContent | null;
   isLoading: boolean;
+  atsAnalysis?: ATSAnalysisResult | null;
+  onViewATSDetails?: () => void;
 }
 
-export function CVPreviewPanel({ cvContent, isLoading }: CVPreviewPanelProps) {
+export function CVPreviewPanel({ cvContent, isLoading, atsAnalysis, onViewATSDetails }: CVPreviewPanelProps) {
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-8 h-full flex items-center justify-center">
@@ -34,6 +37,16 @@ export function CVPreviewPanel({ cvContent, isLoading }: CVPreviewPanelProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden" style={{ maxHeight: '90vh' }}>
+      {/* ATS Score Badge - positioned at top */}
+      {atsAnalysis && (
+        <div className="p-4 border-b border-gray-200">
+          <ATSScoreBadge 
+            score={atsAnalysis.overallScore} 
+            onViewDetails={onViewATSDetails}
+          />
+        </div>
+      )}
+
       {/* PDF Preview Controls Header */}
       <div className="bg-gray-100 border-b border-gray-300 px-4 py-2 flex items-center justify-between text-sm">
         <div className="flex items-center space-x-4">

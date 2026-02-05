@@ -77,6 +77,8 @@ model GeneratedCV {
   positionDetails   String?       @db.Text
   aiGeneratedText   String        @db.Text
   pdfFileUrl        String?
+  atsScore          Int?
+  atsAnalysis       String?       @db.Text
   cvCreatedAt       DateTime      @default(now())
   cvUpdatedAt       DateTime      @updatedAt
 }

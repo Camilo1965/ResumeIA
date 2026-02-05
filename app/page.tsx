@@ -3,16 +3,22 @@
 import { useState } from 'react';
 import { CVBuilderForm } from '@/components/cv-builder/CVBuilderForm';
 import { CVPreviewPanel } from '@/components/cv-builder/CVPreviewPanel';
-import { CVContent } from '@/types';
+import { ATSAnalysisPanel } from '@/components/ats/ATSAnalysisPanel';
+import { CVContent, ATSAnalysisResult } from '@/types';
 
 export default function ResumeGeneratorPage() {
   const [cvContent, setCVContent] = useState<CVContent | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('modern');
+  const [atsAnalysis, setATSAnalysis] = useState<ATSAnalysisResult | null>(null);
+  const [isATSPanelOpen, setIsATSPanelOpen] = useState(false);
+  const [jobRequirements, setJobRequirements] = useState<string>('');
 
   const handleGenerateCV = async (formData: any) => {
     setIsGenerating(true);
     setSelectedTemplate(formData.selectedTemplate || 'modern');
+    setJobRequirements(formData.positionDetails || '');
+    
     try {
       const response = await fetch('/api/generate-cv', {
         method: 'POST',
@@ -31,11 +37,39 @@ export default function ResumeGeneratorPage() {
 
       const data = await response.json();
       setCVContent(data.cvContent);
+
+      // Automatically analyze ATS compatibility
+      if (data.cvContent) {
+        await analyzeATS(data.cvContent, formData.positionDetails);
+      }
     } catch (error) {
       console.error('Error generating CV:', error);
       alert('Failed to generate resume. Please try again.');
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const analyzeATS = async (content: CVContent, jobReqs?: string) => {
+    try {
+      const response = await fetch('/api/ats/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cvContent: content,
+          jobRequirements: jobReqs,
+        }),
+      });
+
+      if (response.ok) {
+        const analysis = await response.json();
+        setATSAnalysis(analysis);
+      }
+    } catch (error) {
+      console.error('Error analyzing ATS:', error);
+      // Don't alert user - ATS is optional feature
     }
   };
 
@@ -74,6 +108,13 @@ export default function ResumeGeneratorPage() {
     }
   };
 
+  const handleApplySuggestions = async () => {
+    if (!cvContent || !atsAnalysis) return;
+    
+    alert('Apply Suggestions feature coming soon! This will regenerate your CV with the recommended improvements.');
+    setIsATSPanelOpen(false);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Resume Generator</h1>
@@ -91,9 +132,24 @@ export default function ResumeGeneratorPage() {
 
         {/* Preview Section */}
         <div>
-          <CVPreviewPanel cvContent={cvContent} isLoading={isGenerating} />
+          <CVPreviewPanel 
+            cvContent={cvContent} 
+            isLoading={isGenerating}
+            atsAnalysis={atsAnalysis}
+            onViewATSDetails={() => setIsATSPanelOpen(true)}
+          />
         </div>
       </div>
+
+      {/* ATS Analysis Panel */}
+      {atsAnalysis && (
+        <ATSAnalysisPanel
+          analysis={atsAnalysis}
+          isOpen={isATSPanelOpen}
+          onClose={() => setIsATSPanelOpen(false)}
+          onApplySuggestions={handleApplySuggestions}
+        />
+      )}
     </div>
   );
 }
