@@ -29,13 +29,13 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
   const { register, handleSubmit, formState: { errors } } = useForm<CVFormData>({
     defaultValues: {
       displayLinkedin: true,
-      selectedTemplate: 'minimalist',
-      bgPattern: 'hexagon',
+      selectedTemplate: 'modern',
+      bgPattern: 'none',
     },
   });
 
-  const [activeTemplate, setActiveTemplate] = useState<TemplateVariant>('minimalist');
-  const [activeBackground, setActiveBackground] = useState<BackgroundPattern>('hexagon');
+  const [activeTemplate, setActiveTemplate] = useState<TemplateVariant>('modern');
+  const [activeBackground, setActiveBackground] = useState<BackgroundPattern>('none');
   const [profileName, setProfileName] = useState<string>('');
 
   useEffect(() => {
@@ -143,19 +143,22 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
       {/* Resume Template Selector */}
       <div>
         <label className="label-text">Resume Template</label>
-        <div className="grid grid-cols-3 gap-4 mt-2">
-          {(['modern', 'classic', 'minimalist'] as TemplateVariant[]).map((template) => (
+        <div className="grid grid-cols-3 gap-3 mt-2">
+          {(['modern', 'classic', 'minimalist', 'executive', 'creative'] as TemplateVariant[]).map((template) => (
             <button
               key={template}
               type="button"
               onClick={() => setActiveTemplate(template)}
-              className={`p-4 border-2 rounded-lg text-center capitalize transition-all ${
+              className={`p-3 border-2 rounded-lg text-center capitalize transition-all text-sm ${
                 activeTemplate === template
-                  ? 'border-accent-teal bg-teal-50'
+                  ? 'border-accent-teal bg-teal-50 font-semibold'
                   : 'border-gray-300 hover:border-gray-400'
               }`}
             >
               {template}
+              {(template === 'executive' || template === 'creative') && (
+                <span className="ml-1 text-xs">⭐</span>
+              )}
             </button>
           ))}
         </div>
@@ -164,24 +167,28 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
       {/* Background Style Selector */}
       <div>
         <label className="label-text">Background Style</label>
-        <div className="grid grid-cols-2 gap-4 mt-2">
+        <div className="grid grid-cols-2 gap-3 mt-2">
           {([
             { value: 'none', label: 'No Background' },
             { value: 'particle_dots', label: 'Particle Dots' },
             { value: 'dot_flow', label: 'Dot Flow' },
             { value: 'hexagon', label: 'Hexagon' },
-          ] as { value: BackgroundPattern; label: string }[]).map((bg) => (
+            { value: 'gradient_flow', label: 'Gradient Flow', new: true },
+            { value: 'circuit_pattern', label: 'Circuit Pattern', new: true },
+            { value: 'waves', label: 'Waves', new: true },
+          ] as { value: BackgroundPattern; label: string; new?: boolean }[]).map((bg) => (
             <button
               key={bg.value}
               type="button"
               onClick={() => setActiveBackground(bg.value)}
-              className={`p-4 border-2 rounded-lg text-center transition-all ${
+              className={`p-3 border-2 rounded-lg text-center transition-all text-sm ${
                 activeBackground === bg.value
-                  ? 'border-accent-teal bg-teal-50'
+                  ? 'border-accent-teal bg-teal-50 font-semibold'
                   : 'border-gray-300 hover:border-gray-400'
               }`}
             >
               {bg.label}
+              {bg.new && <span className="ml-1 text-xs">⭐</span>}
             </button>
           ))}
         </div>

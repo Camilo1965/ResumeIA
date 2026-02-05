@@ -1,8 +1,8 @@
 import { DefaultSession } from 'next-auth';
 
-export type TemplateVariant = 'modern' | 'classic' | 'minimalist';
+export type TemplateVariant = 'modern' | 'classic' | 'minimalist' | 'executive' | 'creative';
 
-export type BackgroundPattern = 'none' | 'particle_dots' | 'dot_flow' | 'hexagon';
+export type BackgroundPattern = 'none' | 'particle_dots' | 'dot_flow' | 'hexagon' | 'gradient_flow' | 'circuit_pattern' | 'waves';
 
 export interface AuthenticatedUser {
   userId: string;

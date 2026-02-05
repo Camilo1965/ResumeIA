@@ -6,7 +6,7 @@ import { CVContent } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
-    const { cvContent } = await request.json();
+    const { cvContent, template } = await request.json();
 
     if (!cvContent) {
       return NextResponse.json(
@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
     // Note: Type assertion is needed because @react-pdf/renderer's type definitions
     // expect a Document element directly, but we're passing a component that renders a Document
     const pdfDoc = React.createElement(CVPDFDocument, { 
-      cvContent: cvContent as CVContent 
+      cvContent: cvContent as CVContent,
+      template: template || 'modern'
     });
     
     const pdfInstance = pdf(pdfDoc as any);
