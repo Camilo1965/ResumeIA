@@ -1,0 +1,14 @@
+{
+  "title": "History",
+  "generatedResumes": "Generated Resumes",
+  "noHistory": "No resumes generated yet",
+  "table": {
+    "position": "Position",
+    "company": "Company",
+    "date": "Date",
+    "actions": "Actions",
+    "view": "View",
+    "download": "Download",
+    "share": "Share"
+  }
+}

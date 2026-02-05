@@ -1,0 +1,43 @@
+{
+  "title": "Generador de CV",
+  "form": {
+    "profileLabel": "Perfil",
+    "jobInfoTitle": "Información del Trabajo",
+    "jobTitle": "Título del Trabajo",
+    "jobTitlePlaceholder": "ej., Ingeniero de Software Senior",
+    "jobTitleRequired": "El título del trabajo es requerido",
+    "companyName": "Nombre de la Empresa",
+    "companyNamePlaceholder": "ej., Tech Innovations Corp",
+    "companyNameRequired": "El nombre de la empresa es requerido",
+    "jobLink": "Enlace del Trabajo (opcional)",
+    "jobLinkPlaceholder": "https://ejemplo.com/oferta-trabajo",
+    "showLinkedin": "Mostrar LinkedIn en el CV",
+    "jobRequirements": "Requisitos del Trabajo (opcional)",
+    "jobRequirementsHelp": "Comparte los requisitos del trabajo para que la IA adapte tu CV",
+    "jobRequirementsPlaceholder": "Pega la descripción del trabajo aquí para adaptar tu CV...",
+    "resumeLanguage": "Idioma del CV",
+    "resumeLanguageHelp": "Idioma para el CV generado (independiente del idioma de la interfaz)",
+    "templateTitle": "Plantilla de CV",
+    "backgroundTitle": "Estilo de Fondo",
+    "noBackground": "Sin Fondo",
+    "particleDots": "Puntos Partícula",
+    "dotFlow": "Flujo de Puntos",
+    "hexagon": "Hexágono",
+    "gradientFlow": "Flujo Gradiente",
+    "circuitPattern": "Patrón de Circuito",
+    "waves": "Olas"
+  },
+  "sections": {
+    "summary": "RESUMEN PROFESIONAL",
+    "experience": "EXPERIENCIA PROFESIONAL",
+    "education": "EDUCACIÓN",
+    "skills": "HABILIDADES PROFESIONALES"
+  },
+  "templates": {
+    "modern": "Moderno",
+    "classic": "Clásico",
+    "minimalist": "Minimalista",
+    "executive": "Ejecutivo",
+    "creative": "Creativo"
+  }
+}

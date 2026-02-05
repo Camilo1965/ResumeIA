@@ -1,0 +1,14 @@
+{
+  "title": "Historial",
+  "generatedResumes": "CVs Generados",
+  "noHistory": "No hay CVs generados aún",
+  "table": {
+    "position": "Posición",
+    "company": "Empresa",
+    "date": "Fecha",
+    "actions": "Acciones",
+    "view": "Ver",
+    "download": "Descargar",
+    "share": "Compartir"
+  }
+}

@@ -3,11 +3,14 @@
 import Link from 'next/link';
 import { FileText, Users, History as HistoryIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import { AuthenticatedUserMenu } from '@/components/auth-ui/AuthenticatedUserMenu';
 import { SignInPromptButton } from '@/components/auth-ui/SignInPromptButton';
+import { LanguageSelector } from '@/components/layout/LanguageSelector';
 
 export function AppHeader() {
   const { data: sessionData } = useSession();
+  const t = useTranslations('nav');
 
   return (
     <header className="bg-primary-dark text-white shadow-lg">
@@ -24,18 +27,19 @@ export function AppHeader() {
               className="flex items-center space-x-2 hover:text-accent-gold transition-colors"
             >
               <Users size={20} />
-              <span>Profiles</span>
+              <span>{t('profiles')}</span>
             </Link>
             <Link 
               href="/history" 
               className="flex items-center space-x-2 hover:text-accent-gold transition-colors"
             >
               <HistoryIcon size={20} />
-              <span>History</span>
+              <span>{t('history')}</span>
             </Link>
           </nav>
 
           <div className="flex items-center space-x-4">
+            <LanguageSelector />
             {sessionData?.user ? <AuthenticatedUserMenu /> : <SignInPromptButton />}
           </div>
         </div>

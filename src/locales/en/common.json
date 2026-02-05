@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "profiles": "Profiles",
+    "history": "History"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "generate": "Generate Resume",
+    "download": "Save & Download",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create",
+    "back": "Back",
+    "next": "Next"
+  },
+  "messages": {
+    "success": "Success!",
+    "error": "An error occurred",
+    "loading": "Loading...",
+    "generating": "Generating...",
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully"
+  },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "portuguese": "Português",
+    "french": "Français"
+  }
+}
