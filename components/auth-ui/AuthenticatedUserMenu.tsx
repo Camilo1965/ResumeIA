@@ -55,7 +55,7 @@ export function AuthenticatedUserMenu() {
         {sessionData.user.image ? (
           <Image 
             src={sessionData.user.image} 
-            alt="Avatar" 
+            alt={`${sessionData.user.name || 'User'}'s profile picture`}
             width={40}
             height={40}
             className="rounded-full border-2 border-accent-gold"
