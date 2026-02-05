@@ -37,6 +37,13 @@ export default function ResumeGeneratorPage() {
     }
   };
 
+  const handleSaveDownload = () => {
+    // TODO: Implement PDF download
+    if (cvContent) {
+      alert('PDF download will be implemented soon!');
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Resume Generator</h1>
@@ -44,7 +51,12 @@ export default function ResumeGeneratorPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Form Section */}
         <div className="bg-white rounded-lg shadow-lg p-6 card-shadow">
-          <CVBuilderForm onGenerateCV={handleGenerateCV} isGenerating={isGenerating} />
+          <CVBuilderForm 
+            onGenerateCV={handleGenerateCV} 
+            isGenerating={isGenerating}
+            onSaveDownload={handleSaveDownload}
+            hasGeneratedCV={!!cvContent}
+          />
         </div>
 
         {/* Preview Section */}
