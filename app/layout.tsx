@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
 import { AppHeader } from '@/components/shared/AppHeader'
+import { AuthSessionProvider } from '@/components/providers/AuthSessionProvider'
 
 export const metadata = {
   title: 'Resume AI - AI-Powered CV Generator',
@@ -14,10 +15,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppHeader />
-        <main className="min-h-screen bg-gray-50">
-          {children}
-        </main>
+        <AuthSessionProvider>
+          <AppHeader />
+          <main className="min-h-screen bg-gray-50">
+            {children}
+          </main>
+        </AuthSessionProvider>
       </body>
     </html>
   )

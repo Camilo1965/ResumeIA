@@ -1,6 +1,40 @@
+import { DefaultSession } from 'next-auth';
+
 export type TemplateVariant = 'modern' | 'classic' | 'minimalist';
 
 export type BackgroundPattern = 'none' | 'particle_dots' | 'dot_flow' | 'hexagon';
+
+export interface AuthenticatedUser {
+  userId: string;
+  fullName: string | null;
+  emailAddress: string;
+  verifiedEmail: Date | null;
+  avatarImageUrl: string | null;
+  hashedPassword: string | null;
+  registeredAt: Date;
+  lastModified: Date;
+}
+
+declare module 'next-auth' {
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      image: string;
+    } & DefaultSession['user'];
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    resumeUID?: string;
+    resumeEmail?: string;
+    resumeName?: string;
+    resumePicture?: string;
+    resumeProvider?: string;
+  }
+}
 
 export interface ProfileData {
   profileId?: number;

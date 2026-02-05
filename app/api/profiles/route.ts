@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { databaseClient } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
 
 export async function GET() {
   try {
@@ -59,10 +60,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const sessionData = await getServerSession();
+    
+    if (!sessionData?.user?.email) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const currentUser = await databaseClient.authenticatedUser.findUnique({
+      where: { emailAddress: sessionData.user.email },
+    });
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
     const requestData = await request.json();
 
     const newProfile = await databaseClient.userProfile.create({
       data: {
+        ownedByUserId: currentUser.userId,
         completeName: requestData.completeName,
         jobTitle: requestData.jobTitle || null,
         contactPhone: requestData.contactPhone,

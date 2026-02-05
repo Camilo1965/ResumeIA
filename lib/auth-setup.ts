@@ -63,9 +63,9 @@ export const resumeAIAuthConfiguration: NextAuthOptions = {
     jwt: async ({ token, user, account }) => {
       if (user) {
         token.resumeUID = user.id;
-        token.resumeEmail = user.email;
-        token.resumeName = user.name;
-        token.resumePicture = user.image;
+        token.resumeEmail = user.email || undefined;
+        token.resumeName = user.name || undefined;
+        token.resumePicture = user.image || undefined;
       }
       if (account) {
         token.resumeProvider = account.provider;
