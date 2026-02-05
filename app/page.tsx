@@ -8,9 +8,11 @@ import { CVContent } from '@/types';
 export default function ResumeGeneratorPage() {
   const [cvContent, setCVContent] = useState<CVContent | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('modern');
 
   const handleGenerateCV = async (formData: any) => {
     setIsGenerating(true);
+    setSelectedTemplate(formData.selectedTemplate || 'modern');
     try {
       const response = await fetch('/api/generate-cv', {
         method: 'POST',
@@ -46,7 +48,10 @@ export default function ResumeGeneratorPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cvContent }),
+        body: JSON.stringify({ 
+          cvContent,
+          template: selectedTemplate 
+        }),
       });
 
       if (!response.ok) {
