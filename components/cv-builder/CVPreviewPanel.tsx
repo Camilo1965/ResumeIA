@@ -63,7 +63,12 @@ export function CVPreviewPanel({ cvContent, isLoading }: CVPreviewPanelProps) {
             {cvContent.headerInfo.linkedinUrl && (
               <>
                 <br />
-                <a href={`https://${cvContent.headerInfo.linkedinUrl}`} className="text-accent-teal hover:underline">
+                <a 
+                  href={cvContent.headerInfo.linkedinUrl.startsWith('http') 
+                    ? cvContent.headerInfo.linkedinUrl 
+                    : `https://${cvContent.headerInfo.linkedinUrl}`}
+                  className="text-accent-teal hover:underline"
+                >
                   {cvContent.headerInfo.linkedinUrl}
                 </a>
               </>

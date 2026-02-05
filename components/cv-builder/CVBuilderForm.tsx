@@ -5,6 +5,9 @@ import { useForm } from 'react-hook-form';
 import { Briefcase, Building2, Link2, FileText, Download, FileCheck } from 'lucide-react';
 import { TemplateVariant, BackgroundPattern } from '@/types';
 
+// Mock profile name - replace with actual profile fetch when authentication is implemented
+const MOCK_PROFILE_NAME = 'John Doe';
+
 interface CVFormData {
   positionTitle: string;
   organizationName: string;
@@ -38,7 +41,7 @@ export function CVBuilderForm({ onGenerateCV, isGenerating, onSaveDownload, hasG
   useEffect(() => {
     // Fetch profile name (for now use mock data)
     // TODO: Replace with actual profile fetch when authentication is implemented
-    setProfileName('John Doe');
+    setProfileName(MOCK_PROFILE_NAME);
   }, []);
 
   const onSubmitForm = async (formData: CVFormData) => {

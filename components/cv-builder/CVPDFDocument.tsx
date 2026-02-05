@@ -156,7 +156,12 @@ export const CVPDFDocument = ({ cvContent }: CVPDFDocumentProps) => {
             {cvContent.headerInfo.locationText} | {cvContent.headerInfo.phoneNumber} |{' '}
             {cvContent.headerInfo.emailAddress}
             {cvContent.headerInfo.linkedinUrl && (
-              <Text>{'\n'}{cvContent.headerInfo.linkedinUrl}</Text>
+              <Text>
+                {'\n'}
+                {cvContent.headerInfo.linkedinUrl.startsWith('http') 
+                  ? cvContent.headerInfo.linkedinUrl 
+                  : `https://${cvContent.headerInfo.linkedinUrl}`}
+              </Text>
             )}
           </Text>
         </View>

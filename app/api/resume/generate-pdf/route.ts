@@ -16,6 +16,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate PDF using the pdf() method from @react-pdf/renderer v4
+    // Note: Type assertion is needed because @react-pdf/renderer's type definitions
+    // expect a Document element directly, but we're passing a component that renders a Document
     const pdfDoc = React.createElement(CVPDFDocument, { 
       cvContent: cvContent as CVContent 
     });
