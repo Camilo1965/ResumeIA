@@ -1,6 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVContent } from '@/types';
+import { getSectionTitles } from '@/lib/section-titles';
 
 const styles = StyleSheet.create({
   page: {
@@ -156,9 +157,12 @@ const styles = StyleSheet.create({
 
 interface ExecutiveTemplateProps {
   cvContent: CVContent;
+  cvLanguage?: 'en' | 'es';
 }
 
-export const ExecutiveTemplate = ({ cvContent }: ExecutiveTemplateProps) => {
+export const ExecutiveTemplate = ({ cvContent, cvLanguage = 'en' }: ExecutiveTemplateProps) => {
+  const titles = getSectionTitles(cvLanguage);
+  
   const parseBoldText = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {

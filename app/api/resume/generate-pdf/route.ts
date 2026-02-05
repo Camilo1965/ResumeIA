@@ -6,7 +6,7 @@ import { CVContent } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
-    const { cvContent, template } = await request.json();
+    const { cvContent, template, cvLanguage = 'en' } = await request.json();
 
     if (!cvContent) {
       return NextResponse.json(
@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
     // expect a Document element directly, but we're passing a component that renders a Document
     const pdfDoc = React.createElement(CVPDFDocument, { 
       cvContent: cvContent as CVContent,
-      template: template || 'modern'
+      template: template || 'modern',
+      cvLanguage: cvLanguage as 'en' | 'es'
     });
     
     const pdfInstance = pdf(pdfDoc as any);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVContent } from '@/types';
+import { getSectionTitles } from '@/lib/section-titles';
 
 const styles = StyleSheet.create({
   page: {
@@ -127,9 +128,12 @@ const styles = StyleSheet.create({
 
 interface ModernTemplateProps {
   cvContent: CVContent;
+  cvLanguage?: 'en' | 'es';
 }
 
-export const ModernTemplate = ({ cvContent }: ModernTemplateProps) => {
+export const ModernTemplate = ({ cvContent, cvLanguage = 'en' }: ModernTemplateProps) => {
+  const titles = getSectionTitles(cvLanguage);
+  
   const parseBoldText = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
@@ -167,13 +171,13 @@ export const ModernTemplate = ({ cvContent }: ModernTemplateProps) => {
         </View>
 
         {/* Professional Summary */}
-        <Text style={styles.sectionTitle}>📋 PROFESSIONAL SUMMARY</Text>
+        <Text style={styles.sectionTitle}>📋 {titles.summary}</Text>
         <Text style={styles.summaryText}>{parseBoldText(cvContent.professionalOverview)}</Text>
 
         {/* Professional Experience */}
         {cvContent.workExperienceList.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>💼 PROFESSIONAL EXPERIENCE</Text>
+            <Text style={styles.sectionTitle}>💼 {titles.experience}</Text>
             {cvContent.workExperienceList.map((experience, idx) => (
               <View key={idx} style={styles.experienceItem}>
                 <View style={styles.experienceHeader}>
@@ -202,7 +206,7 @@ export const ModernTemplate = ({ cvContent }: ModernTemplateProps) => {
         {/* Education */}
         {cvContent.educationList.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>🎓 EDUCATION</Text>
+            <Text style={styles.sectionTitle}>🎓 {titles.education}</Text>
             {cvContent.educationList.map((edu, idx) => (
               <View key={idx} style={styles.educationItem}>
                 <View style={styles.educationHeader}>
@@ -218,7 +222,7 @@ export const ModernTemplate = ({ cvContent }: ModernTemplateProps) => {
         {/* Professional Skills */}
         {cvContent.skillCategories.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>⚡ PROFESSIONAL SKILLS</Text>
+            <Text style={styles.sectionTitle}>⚡ {titles.skills}</Text>
             {cvContent.skillCategories.map((category, idx) => (
               <View key={idx} style={styles.skillCategory}>
                 <Text style={styles.skillCategoryText}>

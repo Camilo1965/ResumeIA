@@ -1,6 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { CVContent } from '@/types';
+import { getSectionTitles } from '@/lib/section-titles';
 
 const styles = StyleSheet.create({
   page: {
@@ -120,9 +121,12 @@ const styles = StyleSheet.create({
 
 interface MinimalistTemplateProps {
   cvContent: CVContent;
+  cvLanguage?: 'en' | 'es';
 }
 
-export const MinimalistTemplate = ({ cvContent }: MinimalistTemplateProps) => {
+export const MinimalistTemplate = ({ cvContent, cvLanguage = 'en' }: MinimalistTemplateProps) => {
+  const titles = getSectionTitles(cvLanguage, 'short');
+  
   const parseBoldText = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
@@ -158,13 +162,13 @@ export const MinimalistTemplate = ({ cvContent }: MinimalistTemplateProps) => {
         </View>
 
         {/* Professional Summary */}
-        <Text style={styles.sectionTitle}>SUMMARY</Text>
+        <Text style={styles.sectionTitle}>{titles.summary}</Text>
         <Text style={styles.summaryText}>{parseBoldText(cvContent.professionalOverview)}</Text>
 
         {/* Professional Experience */}
         {cvContent.workExperienceList.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>EXPERIENCE</Text>
+            <Text style={styles.sectionTitle}>{titles.experience}</Text>
             {cvContent.workExperienceList.map((experience, idx) => (
               <View key={idx} style={styles.experienceItem}>
                 <View style={styles.experienceHeader}>
@@ -193,7 +197,7 @@ export const MinimalistTemplate = ({ cvContent }: MinimalistTemplateProps) => {
         {/* Education */}
         {cvContent.educationList.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>EDUCATION</Text>
+            <Text style={styles.sectionTitle}>{titles.education}</Text>
             {cvContent.educationList.map((edu, idx) => (
               <View key={idx} style={styles.educationItem}>
                 <View style={styles.educationHeader}>
@@ -209,7 +213,7 @@ export const MinimalistTemplate = ({ cvContent }: MinimalistTemplateProps) => {
         {/* Professional Skills */}
         {cvContent.skillCategories.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>SKILLS</Text>
+            <Text style={styles.sectionTitle}>{titles.skills}</Text>
             {cvContent.skillCategories.map((category, idx) => (
               <View key={idx} style={styles.skillCategory}>
                 <Text style={styles.skillCategoryText}>
