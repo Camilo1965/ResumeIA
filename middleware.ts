@@ -1,42 +1,26 @@
-import { withAuth } from 'next-auth/middleware';
-import { NextResponse } from 'next/server';
+import { withAuth } from "next-auth/middleware"
+import { NextResponse } from "next/server"
 
 export default withAuth(
   function middleware(req) {
-    return NextResponse.next();
+    return NextResponse.next()
   },
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        const pathname = req.nextUrl.pathname;
+        // Rutas públicas
+        const publicPaths = ['/login', '/register', '/share']
+        const isPublicPath = publicPaths.some(path => 
+          req.nextUrl.pathname.startsWith(path)
+        )
         
-        const publicRoutes = ['/login', '/register'];
-        const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
-        
-        if (isPublicRoute) {
-          return true;
-        }
-
-        const isShareRoute = pathname.startsWith('/share/');
-        if (isShareRoute) {
-          return true;
-        }
-
-        return !!token;
+        if (isPublicPath) return true
+        return !!token
       },
     },
-    pages: {
-      signIn: '/login',
-    },
   }
-);
+)
 
 export const config = {
-  matcher: [
-    '/',
-    '/profiles/:path*',
-    '/history/:path*',
-    '/login',
-    '/register',
-  ],
-};
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+}
