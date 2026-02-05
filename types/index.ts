@@ -70,6 +70,8 @@ export interface GeneratedCVData {
   positionDetails?: string;
   aiGeneratedText: string;
   pdfFileUrl?: string;
+  atsScore?: number;
+  atsAnalysis?: string;
   cvCreatedAt?: Date;
   cvUpdatedAt?: Date;
 }
