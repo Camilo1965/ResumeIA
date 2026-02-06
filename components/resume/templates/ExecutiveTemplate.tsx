@@ -207,14 +207,14 @@ export const ExecutiveTemplate = ({ cvContent, cvLanguage = 'en' }: ExecutiveTem
 
         <View style={styles.content}>
           {/* Executive Summary */}
-          <Text style={styles.sectionTitle}>EXECUTIVE SUMMARY</Text>
+          <Text style={styles.sectionTitle}>{titles.executiveSummary}</Text>
           <View style={styles.sectionUnderline} />
           <Text style={styles.summaryText}>{parseBoldText(cvContent.professionalOverview)}</Text>
 
           {/* Key Achievements */}
           {keyAchievements.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>KEY ACHIEVEMENTS</Text>
+              <Text style={styles.sectionTitle}>{titles.keyAchievements}</Text>
               <View style={styles.sectionUnderline} />
               {keyAchievements.map((achievement, idx) => (
                 <Text key={idx} style={styles.achievementItem}>
@@ -227,7 +227,7 @@ export const ExecutiveTemplate = ({ cvContent, cvLanguage = 'en' }: ExecutiveTem
           {/* Professional Experience */}
           {cvContent.workExperienceList.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>PROFESSIONAL EXPERIENCE</Text>
+              <Text style={styles.sectionTitle}>{titles.experience}</Text>
               <View style={styles.sectionUnderline} />
               {cvContent.workExperienceList.map((experience, idx) => (
                 <View key={idx} style={styles.experienceItem}>
@@ -257,7 +257,7 @@ export const ExecutiveTemplate = ({ cvContent, cvLanguage = 'en' }: ExecutiveTem
           {/* Education */}
           {cvContent.educationList.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>EDUCATION</Text>
+              <Text style={styles.sectionTitle}>{titles.education}</Text>
               <View style={styles.sectionUnderline} />
               {cvContent.educationList.map((edu, idx) => (
                 <View key={idx} style={styles.educationItem}>
@@ -274,7 +274,7 @@ export const ExecutiveTemplate = ({ cvContent, cvLanguage = 'en' }: ExecutiveTem
           {/* Professional Skills */}
           {cvContent.skillCategories.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>PROFESSIONAL SKILLS</Text>
+              <Text style={styles.sectionTitle}>{titles.skills}</Text>
               <View style={styles.sectionUnderline} />
               {cvContent.skillCategories.map((category, idx) => (
                 <View key={idx} style={styles.skillCategory}>

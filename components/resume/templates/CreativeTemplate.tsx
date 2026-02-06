@@ -170,9 +170,12 @@ const styles = StyleSheet.create({
 
 interface CreativeTemplateProps {
   cvContent: CVContent;
+  cvLanguage?: 'en' | 'es';
 }
 
-export const CreativeTemplate = ({ cvContent }: CreativeTemplateProps) => {
+export const CreativeTemplate = ({ cvContent, cvLanguage = 'en' }: CreativeTemplateProps) => {
+  const titles = getSectionTitles(cvLanguage, 'short');
+  
   const parseBoldText = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
@@ -214,7 +217,7 @@ export const CreativeTemplate = ({ cvContent }: CreativeTemplateProps) => {
           <View style={styles.leftColumn}>
             {/* Contact Card */}
             <View style={styles.card}>
-              <Text style={styles.cardTitle}>CONTACT</Text>
+              <Text style={styles.cardTitle}>{titles.contact}</Text>
               <View style={styles.cardUnderline} />
               <Text style={styles.contactItem}>📞 {cvContent.headerInfo.phoneNumber}</Text>
               <Text style={styles.contactItem}>✉️ {cvContent.headerInfo.emailAddress}</Text>
@@ -227,7 +230,7 @@ export const CreativeTemplate = ({ cvContent }: CreativeTemplateProps) => {
             {/* Skills Card */}
             {cvContent.skillCategories.length > 0 && (
               <View style={styles.card}>
-                <Text style={styles.cardTitle}>SKILLS</Text>
+                <Text style={styles.cardTitle}>{titles.skills}</Text>
                 <View style={styles.cardUnderline} />
                 {cvContent.skillCategories.slice(0, 5).flatMap((category, catIdx) => 
                   category.skillsList.slice(0, 2).map((skill, skillIdx) => {
@@ -250,7 +253,7 @@ export const CreativeTemplate = ({ cvContent }: CreativeTemplateProps) => {
           <View style={styles.rightColumn}>
             {/* About Me */}
             <View style={{ marginBottom: 12 }}>
-              <Text style={styles.sectionTitle}>ABOUT ME</Text>
+              <Text style={styles.sectionTitle}>{titles.aboutMe}</Text>
               <View style={styles.sectionUnderline} />
               <Text style={styles.aboutText}>{parseBoldText(cvContent.professionalOverview)}</Text>
             </View>
@@ -258,7 +261,7 @@ export const CreativeTemplate = ({ cvContent }: CreativeTemplateProps) => {
             {/* Experience */}
             {cvContent.workExperienceList.length > 0 && (
               <View style={{ marginBottom: 12 }}>
-                <Text style={styles.sectionTitle}>EXPERIENCE</Text>
+                <Text style={styles.sectionTitle}>{titles.experience}</Text>
                 <View style={styles.sectionUnderline} />
                 {cvContent.workExperienceList.map((experience, idx) => (
                   <View key={idx} style={styles.experienceItem}>
@@ -286,7 +289,7 @@ export const CreativeTemplate = ({ cvContent }: CreativeTemplateProps) => {
         {/* Education - Full Width at Bottom */}
         {cvContent.educationList.length > 0 && (
           <View>
-            <Text style={styles.sectionTitle}>EDUCATION</Text>
+            <Text style={styles.sectionTitle}>{titles.education}</Text>
             <View style={styles.sectionUnderline} />
             {cvContent.educationList.map((edu, idx) => (
               <View key={idx} style={styles.educationItem}>
